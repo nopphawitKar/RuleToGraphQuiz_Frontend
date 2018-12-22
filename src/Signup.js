@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+﻿import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
@@ -14,6 +14,7 @@ class Signup extends Component {
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.encryptPassword = this.encryptPassword.bind(this);
+    this.check = this.check.bind(this);
   }
 
   handleSubmit(event) {
@@ -30,6 +31,13 @@ class Signup extends Component {
                             password:hash ,
                             firstname: event.target['firstname'].value,
                             lastname: event.target['lastname'].value}),
+    });
+  }
+
+  check(){
+      bcrypt.compare("yyy", "$2a$10$3nmImJyRXxz2DUI2SRnHtOHsLRkefWbKUb5Y4EwNh6XxRpJTQbaFW", function(err, res) {
+        // res === true
+        console.log(res);
     });
   }
 
@@ -55,6 +63,7 @@ class Signup extends Component {
             <input id="lastname" name="lastname" type="text" className="Signup-input-field"  placeholder="Last name"/>
             <button className="Signup-button">Signup</button>
           </form>
+          {/*<button className="check" onClick={this.check}>check</button>*/}
         </div>
     );
   }

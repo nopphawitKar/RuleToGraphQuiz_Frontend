@@ -1,4 +1,4 @@
-.App {
+﻿.App {
   text-align: center;
 }
 
@@ -56,6 +56,32 @@
 }
 
 .Signup-button {
+  grid-column: 4 / span 2;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+/*Login*/
+.Login-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 10px;
+}
+
+.Login-form {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto auto auto;
+  padding: 10px;
+  grid-column: 2 / span 1;
+}
+
+.Login-input-field {
+  grid-column: 4 / span 2;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.Login-button {
   grid-column: 4 / span 2;
   margin-top: 5px;
   margin-left: 5px;
