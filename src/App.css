@@ -1,34 +1,51 @@
-﻿.App {
-  text-align: center;
+﻿/*Global*/
+html,body{
+  height: 100%;
+  font-family: 'Kanit', sans-serif;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+#root, .App{
+  height: 100%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.color-winter{
+  background-image: linear-gradient(#a1c4fd, #c2e9fb);
+}
+
+.color-whale{
+  background-image: linear-gradient(#a3bded, #6991c7);
+}
+
+.color-eternal{
+  background-image: linear-gradient(#09203f, #537895);
+}
+
+.color-azkaban{
+  background-image: linear-gradient(black, #485563);
+}
+
+.Head-bar {
+/*  width: 200px;
+  height: 100px;*/
+  background: white;
+  position: absolute;
+  background: #c5170e;
+}
+
+.Head-bar .text{
+  margin-top: 25px;
+  margin-left: 25px;
+/*  margin-right: 25px;
+  margin-bottom: 25px;*/
+
   color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/*App*/
+.App-container {
+  height: 100%;
 }
 
 /*Signup*/
@@ -64,25 +81,127 @@
 /*Login*/
 .Login-container {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: 50% 50%;
+  grid grid-template-rows: 33% 33% 33%;
   padding: 10px;
 }
 
-.Login-form {
-  display: grid;
-  grid-template-columns: auto auto auto auto auto auto auto auto;
-  padding: 10px;
-  grid-column: 2 / span 1;
+.Login-container > img {
+  grid-column: 1 / span 1;
+  grid-row: 1/span 3;
+  width: 100%;
 }
 
-.Login-input-field {
-  grid-column: 4 / span 2;
-  margin-top: 5px;
-  margin-left: 5px;
+@media (min-width: 601px){
+  .Login-form {
+    display: grid;
+    grid-template-columns: 100px 400px;
+    padding: 10px;
+    grid-column: 2 / span 1;
+    grid-row: 2/span 3;
+    height: 10%;
+  }
 }
 
-.Login-button {
-  grid-column: 4 / span 2;
-  margin-top: 5px;
-  margin-left: 5px;
+@media (min-width: 601px){
+  .Login-form > label{
+    grid-column: 1 / span 1;
+  }
 }
+
+@media (min-width: 601px){
+  .Login-input-field {
+    grid-column: 2 / span 1;
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+}
+
+@media (min-width: 601px){
+  .Login-button {
+    grid-column: 2 / span 1;
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+}
+
+@media (max-width: 601px){
+  .Login-form {
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: 10px;
+    grid-column: 2 / span 1;
+    grid-row: 2/span 3;
+    height: 10%;
+  }
+}
+
+@media (max-width: 601px){
+  .Login-form > label{
+    grid-column: 1 / span 1;
+  }
+}
+
+@media (max-width: 601px){
+  .Login-input-field {
+    grid-column: 2 / span 1;
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+}
+
+@media (max-width: 601px){
+  .Login-button {
+    grid-column: 2 / span 1;
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+}
+/*Dashboard*/
+.Dashboard-container {
+  /*display: grid;
+  grid-template-columns: auto auto auto auto;*/
+  /*grid-template-rows: 230px 230px 230px 230px 230px 230px 230px;*/
+/*  grid-template-rows: 50% 50%;
+  height: 100%;*/
+/*  padding-left: 10%;
+  padding-right: 10%;*/
+}
+
+.Dashboard-container img {
+  /*height: 100%;*/
+  /*vertical and centre*/
+  height: 100%;
+  /*width: 100%;*/
+  float: left;
+  position: absolute;
+  /*height: 100%;*/
+  /*display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;*/
+  /*grid-column: span 2;
+  grid-row: span 1;*/
+}
+
+.Dashboard-overlay {
+    width: 200px;
+    height: 100px;
+    background: white;
+    position: absolute;
+    background: #c5170e;
+}
+
+.Dashboard-overlay > .text {
+    margin-top: 25px;
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-bottom: 25px;
+
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/*Understand*/
