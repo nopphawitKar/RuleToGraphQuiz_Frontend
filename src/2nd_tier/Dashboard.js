@@ -9,6 +9,8 @@ import salidcat from '../image/salid_cat.png'
 import babycats from '../image/baby_cats.png'
 import gankster_cat4 from '../image/gankster_cat4.gif'
 
+const HEADER_UNDERSTANDABILITY = "understandability test";
+
 class Dashboard extends Component {
   constructor(props){
     super(props);
@@ -18,13 +20,22 @@ class Dashboard extends Component {
       catMessage: ""
     };
     this.catSaid = this.catSaid.bind(this);
+    this.onCatClick = this.onCatClick.bind(this);
   }
 
   catSaid(catMessage){
     this.setState({
       catMessage: catMessage
     })
+    
   }
+
+  onCatClick(selectedMenu){
+    if(selectedMenu === HEADER_UNDERSTANDABILITY){
+      window.location.href = "http://localhost:3000/understand"
+    }
+  }
+
   randomColor(){
 
   }
@@ -38,10 +49,10 @@ class Dashboard extends Component {
         </div>
         <map name="catMap">
           {/*salid*/}
-          <area onMouseOver={() => this.catSaid("learnability test")} coords="0,872,273,360" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("learnability test")} coords="363,807,273,552" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("learnability test")} coords="364,765,487,832,240,507" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("learnability test")} coords="271,459,290,552" shape="rect"/>
+          <area onMouseOver={() => this.catSaid(HEADER_UNDERSTANDABILITY)} onClick={() => this.onCatClick(HEADER_UNDERSTANDABILITY)} coords="0,872,273,360" shape="rect"/>
+          <area onMouseOver={() => this.catSaid(HEADER_UNDERSTANDABILITY)} onClick={() => this.onCatClick(HEADER_UNDERSTANDABILITY)} coords="363,807,273,552" shape="rect"/>
+          <area onMouseOver={() => this.catSaid(HEADER_UNDERSTANDABILITY)} onClick={() => this.onCatClick(HEADER_UNDERSTANDABILITY)} coords="364,765,487,832,240,507" shape="rect"/>
+          <area onMouseOver={() => this.catSaid(HEADER_UNDERSTANDABILITY)} onClick={() => this.onCatClick(HEADER_UNDERSTANDABILITY)} coords="271,459,290,552" shape="rect"/>
 
           {/*swat*/}
           <area onMouseOver={() => this.catSaid("ประวัติส่วนตัว")} coords="258,8,510,359" shape="rect"/>
