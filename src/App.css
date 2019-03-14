@@ -25,24 +25,89 @@ html,body{
 }
 
 .Head-bar {
-/*  width: 200px;
-  height: 100px;*/
   background: white;
-  position: absolute;
   background: #c5170e;
+  height: 70px;
+  width: 1000px;
 }
 
 .Head-bar .text{
-  margin-top: 25px;
-  margin-left: 25px;
-/*  margin-right: 25px;
-  margin-bottom: 25px;*/
-
+  padding-top: 20px;
   color: white;
-  text-align: center;
+  text-align: left;
   font-weight: bold;
   font-size: 20px;
+  padding-left: 20px;
 }
+
+.Question-text {
+  padding-left: 20px;
+  width: 1000px;
+}
+
+/*Override_fontawesome*/
+.svg-inline--fa {
+  color: white;
+}
+
+/*Util_indent_tree*/
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 3px;
+}
+
+.node text {
+  font: 12px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
+
+/*Util_indent_tag*/
+.node rect {
+  cursor: pointer;
+  fill: #fff;
+  fill-opacity: 0.5;
+  stroke: #3182bd;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+
+
+.understandGraph svg{
+  border: solid 1px;
+  width: 1000px;
+}
+
+/*.understandGraph svg g{
+  fill: none;
+}*/
+
+/*Util_table_tool*/
+.understandGraph .block {
+  font: 10px sans-serif;
+  background-color: steelblue;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+  float: left;
+}
+
 /*App*/
 .App-container {
   height: 100%;
@@ -205,3 +270,39 @@ html,body{
 }
 
 /*Understand*/
+.Understand-container {
+
+}
+
+.Understand-test-part {
+  width: 1000px;
+  min-width: 1000px;
+  max-width: 1000px;
+  height: 100%;
+  float: left;
+}
+
+.Understand-progress-box {
+  width: 500px;
+  min-width: 500px;
+  height: 100%;
+  border: solid 1px;
+  float: left;
+  margin-left: 50px;
+  background-color: #c5170e;
+}
+
+.Understand-progress-bar {
+  width: 500px;
+  min-width: 500px;
+  height: 50px;
+  border: solid 1px;
+  float: left;
+
+  padding-top: 20px;
+  /*padding-left: 10px;*/
+}
+
+.Understand-progress-bar svg{
+  margin-left: 20px;
+}
