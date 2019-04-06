@@ -108,6 +108,11 @@ html,body{
   float: left;
 }
 
+rect.tabletool_top {
+    stroke-width: 1px;
+    stroke: white;
+}
+
 /*App*/
 .App-container {
   height: 100%;
