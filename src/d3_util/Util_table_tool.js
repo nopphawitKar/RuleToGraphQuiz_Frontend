@@ -68,20 +68,20 @@ export function create(treeData, selector, updater) {
 
 	function onTabletoolClick(){
 		d3.selectAll('.tabletool_top').on('click', function(d) {
-			//click on a parent
+			//kill same hierarchy on click
 			var parent = d;
 			d3.selectAll('.tabletool_top')
 			.style("display", (node) => {
-				if(node.depth == parent.depth && node.data.name != parent.data.name){//node.x0 != parent.x0){
+				if(node.depth == parent.depth && node.data.name != parent.data.name){
 					return "none";
 				}
 			})
+			.attr('x', () => { return 0})
 
 			//show all children
 			var children = d.children || [];
 			var childCounter = 0;
 			children.forEach((child) => {
-				// var childX = child.x0;
 				var childName = child.data.name;
 				var childDepth = child.depth;
 				//show all the clicked node's children
