@@ -7,9 +7,14 @@ const BOX_HIGHT = 100;
 const ORIGINAL_DEPTH = 0;
 
 var selectedCount = 0;
-var xCoordinates = [0];
-var yCoordinates = [0];
-var attributes = [];
+// var xCoordinates = [0];
+// var yCoordinates = [0];
+// var attributes = [];
+var attributes = {};
+attributes.xCoordinates = [];
+attributes.yCoordinates = [];
+attributes.texts = [];
+
 // var graphData = [100,2,3];
 // var selectData = ['softdrink', 'cola', 'paper']
 
@@ -52,19 +57,35 @@ export function create(treeData, selector, updater) {
 		      return "none";//nodes whose depth is more than 1 make its vanish
 		    }
 		  })
+			//save x y and boxvalue for creating text
+			attributes.xCoordinates = [0]
+			attributes.yCoordinates= [0]
+			attributes.texts = [treeDataCopy.name]
+			createBoxTexts()
+	}
 
-			attributes.push(treeDataCopy.name);
+	function createBoxTexts(){
+		d3.selectAll('text').remove();
+		attributes.xCoordinates.forEach((data, index) => {
 			d3.selectAll('g')
 			.append('text')
 			.attr('x', (node) => {
-				return 0;
+				return attributes.xCoordinates[index] + 10;//10px padding
 			})
 			.attr('y', (node) => {
-				return 0;
+				return attributes.yCoordinates[index] + 10;//10px padding
 			})
 			.text(()=>{
-				return attributes[0];
+				return attributes.texts[index];
 			})
+		});
+	}
+
+	function resetBoxTexts(){
+		attributes.xCoordinates = [0]
+		attributes.yCoordinates= [0]
+		attributes.texts = [treeDataCopy.name]
+		createBoxTexts()
 	}
 
 	function resetCoordinate(depth) {
@@ -85,6 +106,7 @@ export function create(treeData, selector, updater) {
 
 
 	function onTabletoolClick(){
+		resetBoxTexts();
 		d3.selectAll('.tabletool_top').on('click', function(d) {
 			//kill same hierarchy when (select)
 			var parent = d;
@@ -106,7 +128,7 @@ export function create(treeData, selector, updater) {
 				}
 			})
 
-			//show all children
+			//children
 			var children = parent.children || [];
 			var childCounter = 0;
 			children.forEach((child) => {
@@ -129,6 +151,10 @@ export function create(treeData, selector, updater) {
 			    }else if(node.depth == childDepth){//child
 						if( node.data.name == childName){
 							node.x = childCounter * BOX_WIDTH;
+
+							//save x y and boxvalue for creating text
+							attributes.xCoordinates.push(childCounter * BOX_WIDTH)
+
 							return childCounter * BOX_WIDTH;
 						}
 						return node.x;
@@ -140,12 +166,18 @@ export function create(treeData, selector, updater) {
 					if (node.depth <= parentDepth){
 						return 0;
 					}else{
+						if(node.data.name == childName){
+							//save x y and boxvalue for creating text
+							attributes.yCoordinates.push(BOX_HIGHT)
+							attributes.texts.push(node.data.name)
+						}
 						return BOX_HIGHT;//childDepth * BOX_HIGHT;
 					}
 				})
 				childCounter++;
 
 			})
+			createBoxTexts();
 		});
 	}
 
