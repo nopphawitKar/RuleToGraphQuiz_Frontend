@@ -111,6 +111,7 @@ html,body{
 rect.tabletool_top {
     stroke-width: 1px;
     stroke: white;
+    fill: cornflowerblue;
 }
 
 /*App*/

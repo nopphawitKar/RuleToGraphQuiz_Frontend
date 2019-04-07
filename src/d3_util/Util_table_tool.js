@@ -5,6 +5,8 @@ import { select } from 'd3-selection';
 const BOX_WIDTH = 100;
 const BOX_HIGHT = 100;
 const ORIGINAL_DEPTH = 0;
+
+var selectedCount = 0;
 // var graphData = [100,2,3];
 // var selectData = ['softdrink', 'cola', 'paper']
 
@@ -68,7 +70,7 @@ export function create(treeData, selector, updater) {
 
 	function onTabletoolClick(){
 		d3.selectAll('.tabletool_top').on('click', function(d) {
-			//kill same hierarchy on click
+			//kill same hierarchy when (select)
 			var parent = d;
 			d3.selectAll('.tabletool_top')
 			.style("display", (node) => {
@@ -76,7 +78,16 @@ export function create(treeData, selector, updater) {
 					return "none";
 				}
 			})
-			.attr('x', () => { return 0})
+			.attr('x', (node) => {
+				if(node.depth == parent.depth && node.data.name == parent.data.name){
+					return node.depth * BOX_WIDTH
+				}
+			})
+			.attr('y', (node) => {
+				if(node.depth == parent.depth && node.data.name == parent.data.name){
+					return 0
+				}
+			})
 
 			//show all children
 			var children = d.children || [];
