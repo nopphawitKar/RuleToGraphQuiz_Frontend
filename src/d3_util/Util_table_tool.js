@@ -7,6 +7,9 @@ const BOX_HIGHT = 100;
 const ORIGINAL_DEPTH = 0;
 
 var selectedCount = 0;
+var xCoordinates = [0];
+var yCoordinates = [0];
+var attributes = [];
 // var graphData = [100,2,3];
 // var selectData = ['softdrink', 'cola', 'paper']
 
@@ -35,7 +38,7 @@ export function create(treeData, selector, updater) {
 		d3.select(selector).append('svg')
 			.attr("width", width + margin.right + margin.left)
 			.attr("height", height + margin.top + margin.bottom)
-			.append("g")
+			.append('g')
 		  .selectAll('rect')
 		  .data(rootNode.descendants())
 		  .enter()
@@ -49,6 +52,19 @@ export function create(treeData, selector, updater) {
 		      return "none";//nodes whose depth is more than 1 make its vanish
 		    }
 		  })
+
+			attributes.push(treeDataCopy.name);
+			d3.selectAll('g')
+			.append('text')
+			.attr('x', (node) => {
+				return 0;
+			})
+			.attr('y', (node) => {
+				return 0;
+			})
+			.text(()=>{
+				return attributes[0];
+			})
 	}
 
 	function resetCoordinate(depth) {
@@ -72,6 +88,7 @@ export function create(treeData, selector, updater) {
 		d3.selectAll('.tabletool_top').on('click', function(d) {
 			//kill same hierarchy when (select)
 			var parent = d;
+			var parentDepth = d.depth;
 			d3.selectAll('.tabletool_top')
 			.style("display", (node) => {
 				if(node.depth == parent.depth && node.data.name != parent.data.name){
@@ -90,7 +107,7 @@ export function create(treeData, selector, updater) {
 			})
 
 			//show all children
-			var children = d.children || [];
+			var children = parent.children || [];
 			var childCounter = 0;
 			children.forEach((child) => {
 				var childName = child.data.name;
@@ -98,73 +115,40 @@ export function create(treeData, selector, updater) {
 				//show all the clicked node's children
 				d3.selectAll('.tabletool_top')
 				.style("display", (node) => {
-			    if (node.depth == childDepth && node.data.name == childName) {
+			    if (node.depth == childDepth) {//child lvl
 			      return "";
-			    }
+			    }else if(node.depth == parentDepth){//parent lvl
+						return (node.data.name == parent.data.name ? "" : "none")
+					}else if(node.depth < childDepth){//grandFather lvl
+						return "";
+					}
 			  })
 				.attr('x', (node) => {
-					if (node.depth == childDepth && node.data.name == childName) {
-						node.x = childCounter * BOX_WIDTH;
-			      return childCounter * BOX_WIDTH;
-			    }
-					return node.x;
+					if (node.depth <= parentDepth) {//parent and grand grand grand
+			      return node.depth * BOX_WIDTH;
+			    }else if(node.depth == childDepth){//child
+						if( node.data.name == childName){
+							node.x = childCounter * BOX_WIDTH;
+							return childCounter * BOX_WIDTH;
+						}
+						return node.x;
+					}else{//grand grand grand ... child
+						return 0;
+					}
 				})
 				.attr('y', (node) => {
-					if (node.depth == childDepth && node.data.name == childName) {
-						node.y = childDepth * BOX_HIGHT;
-			      return childDepth * BOX_HIGHT;
-			    }
-					return node.y;
+					if (node.depth <= parentDepth){
+						return 0;
+					}else{
+						return BOX_HIGHT;//childDepth * BOX_HIGHT;
+					}
 				})
 				childCounter++;
+
 			})
 		});
 	}
 
 	initiate(ORIGINAL_DEPTH);
 	onTabletoolClick();
-
-
-	// var margin = {top: 20, right: 90, bottom: 30, left: 90},
-	// 	    width = 960 - margin.left - margin.right,
-	// 	    height = 500 - margin.top - margin.bottom;
-	//
-	//
-	// var selectData = treeData.name;
-	//
-	// var select = d3.select(selector)
-	// 			.append("div")
-	// 				.attr("width", width + margin.right + margin.left)
-	// 				.attr("height", height + margin.top + margin.bottom)
-	// 			.append('select')
-	// 				.attr('class','select')
-	// 			.on('change',onchange);
-	//
-	// var options = select
-	// 			.selectAll('option')
-	// 			.data(selectData).enter()
-	// 			.append('option')
-	// 			.text(function (d) { return d; });
-	//
-	// d3.select(selector)
-	//   .append("div")
-	// 	.attr("width", width + margin.right + margin.left)
-	// 	.attr("height", height + margin.top + margin.bottom)
-	//
-	//   .selectAll("div")
-	//   .data(selectData)
-	//     .enter()
-	//
-	//     .append("div")
-	//     .attr("class", "block")
-	//     // .style("width", function(d) { return d + "px"; })
-	//     .style("width", function(d) { return 100 + "px"; })
-	//     .style("height", function(d) { return "50px"; })
-	//     .on('click',onBlockClick)
-	//     .text(function(d) { return d; });
-	//
-	//
-	//     function onBlockClick(){
-	//
-	//     }
 }
