@@ -2,10 +2,19 @@ import * as d3 from "d3";
 import { scaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
 
-const BOX_WIDTH = 100;
+const BOX_WIDTH = 200;
 const BOX_HIGHT = 100;
-const TEXT_PADDING = 10;
+const TEXT_PADDING = BOX_HIGHT / 2;
 const ORIGINAL_DEPTH = 0;
+
+const TITLE_HIGHT = 25;
+const TITLE_WIDTH = 1000;
+const TITLE_TEXT_INDENT = 20;
+const TITLE_TEXT_FIRST = 'คุณลักษณะที่เลือกแล้ว';
+const TITLE_TEXT_CHOICE = 'คุณลักษณะที่สามารถเลือกได้';
+
+const COLOR_BOX = '#ffac00';
+const COLOR_BOX_CHOICE = 'white';
 
 var selectedCount = 0;
 // var xCoordinates = [0];
@@ -48,43 +57,89 @@ export function create(treeData, selector, updater) {
 		  .selectAll('rect')
 		  .data(rootNode.descendants())
 		  .enter()
-		  .append('rect')
+			.append('rect')
 			.attr('class', 'tabletool_top')
-		  .attr('width', function(d) { /*return x(d.x1 - d.x0); }*/return BOX_WIDTH})
-		  .attr('height', function(d) { /*return y(d.y1 - d.y0);*/return BOX_HIGHT })
+		  .attr('width', function(d) { return BOX_WIDTH})
+		  .attr('height', function(d) { return BOX_HIGHT })
+			.attr('y', function(d) {return TITLE_HIGHT + 0;})
+			// .attr('rx', function(d) {return 20;})
+			// .attr('ry', function(d) {return 20;})
 			.attr("id", function(d,i){ return "tabletool" + i})
 			.style("display", function(d) {
 		    if (d.depth > depth) {
 		      return "none";//nodes whose depth is more than 1 make its vanish
 		    }
 		  })
+
+			d3.selectAll('g')
+			.append('rect')
+			.attr('class', 'box_title')
+			.attr('width', (d) => { return TITLE_WIDTH})
+			.attr('height', (d) => { return TITLE_HIGHT })
+
+			d3.selectAll('g')
+			.append('rect')
+			.attr('class', 'box_title')
+			.attr('y', (d) => { return TITLE_HIGHT + BOX_HIGHT})
+			.attr('width', (d) => { return TITLE_WIDTH})
+			.attr('height', (d) => { return TITLE_HIGHT })
+
+
 			//save x y and boxvalue for creating text
 			// attributes.xCoordinates = [0]
 			// attributes.yCoordinates= [0]
 			// attributes.texts = [treeDataCopy.name]
-			createBoxTexts(rootNode, true)
+			createBoxTexts(rootNode, true);
 	}
 
+	function createTitleText(){
+		d3.selectAll('g')
+		.append('text')
+		.attr('class', 'title_text')
+		.attr('alignment-baseline', () => { return 'central';})
+		.attr('x', () => { return TITLE_TEXT_INDENT;})
+		.attr('y', () => { return TITLE_HIGHT/2;})
+		.text(()=>{
+			return TITLE_TEXT_FIRST;
+		})
+
+		d3.selectAll('g')
+		.append('text')
+		.attr('class', 'title_text')
+		.attr('alignment-baseline', () => { return 'central';})
+		.attr('x', () => { return TITLE_TEXT_INDENT;})
+		.attr('y', () => { return (1.5 * TITLE_HIGHT) + BOX_HIGHT;})
+		.text(()=>{
+			return TITLE_TEXT_CHOICE;
+		})
+	}
 	function createBoxTexts(clickedNode, isInitiation){
 		//inner fucntion to create HTML
+		// fucntion buildParentTitle
 		function buildBoxTextsHTML(node, index, clickedNode){
 			d3.selectAll('g')
 			.append('text')
-			.attr('x', () => { return index * BOX_WIDTH;})
+			.attr('class', 'box_text')
+			.attr('text-anchor', () => { return 'middle';})
+			.attr('alignment-baseline', () => { return 'central';})
+			.attr('x', () => { return (index * BOX_WIDTH) + (BOX_WIDTH/2);})
 			.attr('y', () => {
 				if(node.depth <= clickedNode.depth){//ancestors and me lvl
-					return 0 + TEXT_PADDING;
+					return TITLE_HIGHT + 0 + TEXT_PADDING;
 				}else{//children lvl
-					return (1 * BOX_HIGHT) + TEXT_PADDING;
+					return (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + TEXT_PADDING;
 				}
 			})
 			.text(()=>{
-				return node.data.name;
+				var childrenCount = (node.children)? node.children.length : 0;
+				return  node.data.name
 			})
 		}
 
 		//create html
 		d3.selectAll('text').remove();
+		createTitleText();
+
 		var ancestors = getAncestors(clickedNode);
 		ancestors.push(clickedNode);
 		var children = clickedNode.children || [];
@@ -98,15 +153,7 @@ export function create(treeData, selector, updater) {
 		children.forEach((child, index) => {
 		  buildBoxTextsHTML(child, index, clickedNode);
 		});
-		// });
 	}
-
-	// function resetBoxTexts(){
-	// 	attributes.xCoordinates = [0]
-	// 	attributes.yCoordinates= [0]
-	// 	attributes.texts = [treeDataCopy.name]
-	// 	createBoxTexts()
-	// }
 
 	function resetCoordinate(depth) {
 		d3.selectAll('.tabletool_top')
@@ -130,7 +177,7 @@ export function create(treeData, selector, updater) {
 			ancestors.push(node.parent);
 			node = node.parent;
 		}
-		return ancestors;
+		return ancestors.reverse();
 	}
 
 	function onTabletoolClick(){
@@ -145,6 +192,12 @@ export function create(treeData, selector, updater) {
 			createBoxTexts(parent);
 
 			d3.selectAll('.tabletool_top')
+			.style('fill', (node) => {
+				if(node.depth == childDepth){
+					return COLOR_BOX_CHOICE;
+				}
+				return COLOR_BOX;
+			})
 			.style("display", (node) => {
 				var childIndex = children.findIndex((child, index) => {
 					return (child.data.name == node.data.name);
@@ -179,11 +232,7 @@ export function create(treeData, selector, updater) {
 				}else if(node.depth == childDepth){//child
 
 					if( childIndex > -1){
-
 						node.x = childIndex * BOX_WIDTH;
-						//save x y and boxvalue for creating text
-						// attributes.xCoordinates.push(node.x)
-						// return node.x;
 					}
 					return node.x;
 				}else{//grand grand grand ... child
@@ -196,17 +245,11 @@ export function create(treeData, selector, updater) {
 				});
 
 				if (node.depth <= parent.depth){//parent and grand grand grand
-					return 0;
+					return TITLE_HIGHT + 0;
 				}else{
-					if(childIndex > -1){
-						//save x y and boxvalue for creating text
-						// attributes.yCoordinates.push(BOX_HIGHT)
-						// attributes.texts.push(node.data.name)
-					}
-					return BOX_HIGHT;//childDepth * BOX_HIGHT;
+					return (2 * TITLE_HIGHT) + BOX_HIGHT;//childDepth * BOX_HIGHT;
 				}
 			})
-			// createBoxTexts();
 		});
 	}
 
