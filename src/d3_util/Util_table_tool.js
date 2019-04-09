@@ -104,6 +104,14 @@ export function create(treeData, selector, updater) {
 		})
 	}
 
+	function getAncestors(node){
+		var ancestors = [];
+		while(node.parent !== null){
+			ancestors.push(node.parent);
+			node = node.parent;
+		}
+		return ancestors;
+	}
 
 	function onTabletoolClick(){
 		resetBoxTexts();
@@ -111,71 +119,74 @@ export function create(treeData, selector, updater) {
 			//kill same hierarchy when (select)
 			var parent = d;
 			var parentDepth = d.depth;
+
+			var ancestors = getAncestors(parent);
+
+			var children = parent.children || [];
+			// var childCounter = 0;
+			var childDepth = parentDepth + 1;
+
 			d3.selectAll('.tabletool_top')
 			.style("display", (node) => {
-				if(node.depth == parent.depth && node.data.name != parent.data.name){
+				var childIndex = children.findIndex((child, index) => {
+					return (child.data.name == node.data.name);
+				});
+				var isAncestor = ancestors.find((ancestor, index) => {
+					return (ancestor.data.name == node.data.name);
+				});
+
+				if(node.depth == parentDepth){//parent lvl
+					return (node.data.name == parent.data.name ? "" : "none")
+				}else if (node.depth < parentDepth) {//ancestors lvl
+					if(isAncestor){
+						return "";
+					}else{
+						return "none";
+					}
+					// return "";
+				}else{//child lvl
+					if(childIndex > -1){
+						return "";
+					}
 					return "none";
 				}
 			})
 			.attr('x', (node) => {
-				if(node.depth == parent.depth && node.data.name == parent.data.name){
+				var childIndex = children.findIndex((child, index) => {
+					return (child.data.name == node.data.name);
+				});
+
+				if(node.depth <= parent.depth){//parent and grand grand grand
 					return node.depth * BOX_WIDTH
+				}else if(node.depth == childDepth){//child
+
+					if( /*node.data.name == childName*/childIndex > -1){
+
+						node.x = childIndex * BOX_WIDTH;
+						//save x y and boxvalue for creating text
+						attributes.xCoordinates.push(node.x)
+						// return node.x;
+					}
+					return node.x;
+				}else{//grand grand grand ... child
+					return 0;
 				}
 			})
 			.attr('y', (node) => {
-				if(node.depth == parent.depth && node.data.name == parent.data.name){
-					return 0
+				var childIndex = children.findIndex((child, index) => {
+					return (child.data.name == node.data.name);
+				});
+
+				if (node.depth <= parentDepth){//parent and grand grand grand
+					return 0;
+				}else{
+					if(childIndex > -1){
+						//save x y and boxvalue for creating text
+						attributes.yCoordinates.push(BOX_HIGHT)
+						attributes.texts.push(node.data.name)
+					}
+					return BOX_HIGHT;//childDepth * BOX_HIGHT;
 				}
-			})
-
-			//children
-			var children = parent.children || [];
-			var childCounter = 0;
-			children.forEach((child) => {
-				var childName = child.data.name;
-				var childDepth = child.depth;
-				//show all the clicked node's children
-				d3.selectAll('.tabletool_top')
-				.style("display", (node) => {
-			    if (node.depth == childDepth) {//child lvl
-			      return "";
-			    }else if(node.depth == parentDepth){//parent lvl
-						return (node.data.name == parent.data.name ? "" : "none")
-					}else if(node.depth < childDepth){//grandFather lvl
-						return "";
-					}
-			  })
-				.attr('x', (node) => {
-					if (node.depth <= parentDepth) {//parent and grand grand grand
-			      return node.depth * BOX_WIDTH;
-			    }else if(node.depth == childDepth){//child
-						if( node.data.name == childName){
-							node.x = childCounter * BOX_WIDTH;
-
-							//save x y and boxvalue for creating text
-							attributes.xCoordinates.push(childCounter * BOX_WIDTH)
-
-							return childCounter * BOX_WIDTH;
-						}
-						return node.x;
-					}else{//grand grand grand ... child
-						return 0;
-					}
-				})
-				.attr('y', (node) => {
-					if (node.depth <= parentDepth){
-						return 0;
-					}else{
-						if(node.data.name == childName){
-							//save x y and boxvalue for creating text
-							attributes.yCoordinates.push(BOX_HIGHT)
-							attributes.texts.push(node.data.name)
-						}
-						return BOX_HIGHT;//childDepth * BOX_HIGHT;
-					}
-				})
-				childCounter++;
-
 			})
 			createBoxTexts();
 		});
