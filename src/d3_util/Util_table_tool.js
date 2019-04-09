@@ -4,6 +4,7 @@ import { select } from 'd3-selection';
 
 const BOX_WIDTH = 100;
 const BOX_HIGHT = 100;
+const TEXT_PADDING = 10;
 const ORIGINAL_DEPTH = 0;
 
 var selectedCount = 0;
@@ -58,35 +59,54 @@ export function create(treeData, selector, updater) {
 		    }
 		  })
 			//save x y and boxvalue for creating text
-			attributes.xCoordinates = [0]
-			attributes.yCoordinates= [0]
-			attributes.texts = [treeDataCopy.name]
-			createBoxTexts()
+			// attributes.xCoordinates = [0]
+			// attributes.yCoordinates= [0]
+			// attributes.texts = [treeDataCopy.name]
+			createBoxTexts(rootNode, true)
 	}
 
-	function createBoxTexts(){
-		d3.selectAll('text').remove();
-		attributes.xCoordinates.forEach((data, index) => {
+	function createBoxTexts(clickedNode, isInitiation){
+		//inner fucntion to create HTML
+		function buildBoxTextsHTML(node, index, clickedNode){
 			d3.selectAll('g')
 			.append('text')
-			.attr('x', (node) => {
-				return attributes.xCoordinates[index] + 10;//10px padding
-			})
-			.attr('y', (node) => {
-				return attributes.yCoordinates[index] + 10;//10px padding
+			.attr('x', () => { return index * BOX_WIDTH;})
+			.attr('y', () => {
+				if(node.depth <= clickedNode.depth){//ancestors and me lvl
+					return 0 + TEXT_PADDING;
+				}else{//children lvl
+					return (1 * BOX_HIGHT) + TEXT_PADDING;
+				}
 			})
 			.text(()=>{
-				return attributes.texts[index];
+				return node.data.name;
 			})
+		}
+
+		//create html
+		d3.selectAll('text').remove();
+		var ancestors = getAncestors(clickedNode);
+		ancestors.push(clickedNode);
+		var children = clickedNode.children || [];
+		if(isInitiation){
+			children = [];
+		}
+
+		ancestors.forEach((ancestor, index) => {
+		  buildBoxTextsHTML(ancestor, index, clickedNode);
 		});
+		children.forEach((child, index) => {
+		  buildBoxTextsHTML(child, index, clickedNode);
+		});
+		// });
 	}
 
-	function resetBoxTexts(){
-		attributes.xCoordinates = [0]
-		attributes.yCoordinates= [0]
-		attributes.texts = [treeDataCopy.name]
-		createBoxTexts()
-	}
+	// function resetBoxTexts(){
+	// 	attributes.xCoordinates = [0]
+	// 	attributes.yCoordinates= [0]
+	// 	attributes.texts = [treeDataCopy.name]
+	// 	createBoxTexts()
+	// }
 
 	function resetCoordinate(depth) {
 		d3.selectAll('.tabletool_top')
@@ -114,17 +134,15 @@ export function create(treeData, selector, updater) {
 	}
 
 	function onTabletoolClick(){
-		resetBoxTexts();
+		// resetBoxTexts();
 		d3.selectAll('.tabletool_top').on('click', function(d) {
 			//kill same hierarchy when (select)
 			var parent = d;
-			var parentDepth = d.depth;
-
 			var ancestors = getAncestors(parent);
-
 			var children = parent.children || [];
-			// var childCounter = 0;
-			var childDepth = parentDepth + 1;
+			var childDepth = parent.depth + 1;
+
+			createBoxTexts(parent);
 
 			d3.selectAll('.tabletool_top')
 			.style("display", (node) => {
@@ -135,9 +153,9 @@ export function create(treeData, selector, updater) {
 					return (ancestor.data.name == node.data.name);
 				});
 
-				if(node.depth == parentDepth){//parent lvl
+				if(node.depth == parent.depth){//parent lvl
 					return (node.data.name == parent.data.name ? "" : "none")
-				}else if (node.depth < parentDepth) {//ancestors lvl
+				}else if (node.depth < parent.depth) {//ancestors lvl
 					if(isAncestor){
 						return "";
 					}else{
@@ -156,15 +174,15 @@ export function create(treeData, selector, updater) {
 					return (child.data.name == node.data.name);
 				});
 
-				if(node.depth <= parent.depth){//parent and grand grand grand
-					return node.depth * BOX_WIDTH
+				if(node.depth <= parent.depth){//parent
+					return node.depth * BOX_WIDTH;
 				}else if(node.depth == childDepth){//child
 
-					if( /*node.data.name == childName*/childIndex > -1){
+					if( childIndex > -1){
 
 						node.x = childIndex * BOX_WIDTH;
 						//save x y and boxvalue for creating text
-						attributes.xCoordinates.push(node.x)
+						// attributes.xCoordinates.push(node.x)
 						// return node.x;
 					}
 					return node.x;
@@ -177,18 +195,18 @@ export function create(treeData, selector, updater) {
 					return (child.data.name == node.data.name);
 				});
 
-				if (node.depth <= parentDepth){//parent and grand grand grand
+				if (node.depth <= parent.depth){//parent and grand grand grand
 					return 0;
 				}else{
 					if(childIndex > -1){
 						//save x y and boxvalue for creating text
-						attributes.yCoordinates.push(BOX_HIGHT)
-						attributes.texts.push(node.data.name)
+						// attributes.yCoordinates.push(BOX_HIGHT)
+						// attributes.texts.push(node.data.name)
 					}
 					return BOX_HIGHT;//childDepth * BOX_HIGHT;
 				}
 			})
-			createBoxTexts();
+			// createBoxTexts();
 		});
 	}
 
