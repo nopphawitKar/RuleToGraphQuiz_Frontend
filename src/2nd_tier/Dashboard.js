@@ -27,7 +27,7 @@ class Dashboard extends Component {
     this.setState({
       catMessage: catMessage
     })
-    
+
   }
 
   onCatClick(selectedMenu){
@@ -43,38 +43,8 @@ class Dashboard extends Component {
   render() {
     return (
       <div className="Dashboard-container">
-        <img src={gankster_cat4} alt="Smiley face" usemap="#catMap"/>
-        <div class="Dashboard-overlay">
-          <div class="text">{this.state.catMessage}</div>
-        </div>
-        <map name="catMap">
-          {/*salid*/}
-          <area onMouseOver={() => this.catSaid(HEADER_UNDERSTANDABILITY)} onClick={() => this.onCatClick(HEADER_UNDERSTANDABILITY)} coords="0,872,273,360" shape="rect"/>
-          <area onMouseOver={() => this.catSaid(HEADER_UNDERSTANDABILITY)} onClick={() => this.onCatClick(HEADER_UNDERSTANDABILITY)} coords="363,807,273,552" shape="rect"/>
-          <area onMouseOver={() => this.catSaid(HEADER_UNDERSTANDABILITY)} onClick={() => this.onCatClick(HEADER_UNDERSTANDABILITY)} coords="364,765,487,832,240,507" shape="rect"/>
-          <area onMouseOver={() => this.catSaid(HEADER_UNDERSTANDABILITY)} onClick={() => this.onCatClick(HEADER_UNDERSTANDABILITY)} coords="271,459,290,552" shape="rect"/>
 
-          {/*swat*/}
-          <area onMouseOver={() => this.catSaid("ประวัติส่วนตัว")} coords="258,8,510,359" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("ประวัติส่วนตัว")} coords="290,358,646,508" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("ประวัติส่วนตัว")} coords="289,507,554,552" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("ประวัติส่วนตัว")} coords="509,279,642,358" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("ประวัติส่วนตัว")} coords="273,362,291,458" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("ประวัติส่วนตัว")} coords="362,552,515,590" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("ประวัติส่วนตัว")} coords="363,590,397,766" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("ประวัติส่วนตัว")} coords="397,710,476,767" shape="rect"/>
 
-          {/*gankster*/}
-          <area onMouseOver={() => this.catSaid("understandability test")} coords="649,290,927,500" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("understandability test")} coords="703,501,877,559" shape="rect"/>
-
-          {/*kids*/}
-          <area onMouseOver={() => this.catSaid("statistic")} coords="488,590,1069,846" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("statistic")} coords="555,507,702,589" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("statistic")} coords="398,590,487,709" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("statistic")} coords="704,559,838,591" shape="rect"/>
-          <area onMouseOver={() => this.catSaid("statistic")} coords="951,546,1067,591" shape="rect"/>
-        </map>
       </div>
     );
   }
