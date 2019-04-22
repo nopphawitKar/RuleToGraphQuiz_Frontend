@@ -3,6 +3,13 @@ import '../App.css';
 
 import bcrypt from 'bcryptjs';
 
+const METHOD_POST = 'POST';
+const HEADER_JSON = {
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json'
+                    };
+const URL_ADD_NEW_USER = 'http://localhost:3001/users/addNewUser';
+
 class Signup extends Component {
   constructor(props){
     super(props);
@@ -20,12 +27,9 @@ class Signup extends Component {
     event.preventDefault();
     const data = new FormData(event.target);
     var hash = this.encryptPassword(event.target['password'].value);
-    fetch('http://localhost:3001/users/create', {
-      method: 'POST',
-      headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-      },
+    fetch(URL_ADD_NEW_USER, {
+      method: METHOD_POST,
+      headers: HEADER_JSON,
       body: JSON.stringify({name: event.target['username'].value,
                             password:hash ,
                             firstname: event.target['firstname'].value,

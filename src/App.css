@@ -108,11 +108,34 @@ html,body{
   float: left;
 }
 
+rect.box_title {
+  stroke-width: 1px;
+  /* stroke: black; */
+  fill: #c5170e;
+  cursor: pointer;
+}
+
+g > .title_text {
+  padding-left: 20px;
+  width: 1000px;
+  fill: white;
+}
+
 rect.tabletool_top {
     stroke-width: 1px;
-    stroke: white;
-    fill: cornflowerblue;
+    stroke: black;
+    fill: #ffac00;
+    cursor: pointer;
 }
+
+g > .box_text {
+  font: bold 20px sans-serif;
+  pointer-events: none;
+}
+
+/* g > text:hover{
+  display: none;
+} */
 
 /*App*/
 .App-container {

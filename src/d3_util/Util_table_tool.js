@@ -183,6 +183,8 @@ export function create(treeData, selector, updater) {
 	function onTabletoolClick(){
 		// resetBoxTexts();
 		d3.selectAll('.tabletool_top').on('click', function(d) {
+			//update to react parent class
+			updater(d);
 			//kill same hierarchy when (select)
 			var parent = d;
 			var ancestors = getAncestors(parent);

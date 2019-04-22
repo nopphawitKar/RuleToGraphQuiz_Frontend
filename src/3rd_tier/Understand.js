@@ -1,4 +1,5 @@
 ﻿import React, { Component } from 'react';
+import _ from 'lodash';
 import { FilePond } from 'react-filepond';
 import 'filepond/dist/filepond.min.css';
 import request from "superagent";
@@ -10,16 +11,23 @@ import salidcat from '../image/salid_cat.png'
 import babycats from '../image/baby_cats.png'
 import gankster_cat4 from '../image/gankster_cat4.gif'
 
-import * as indenttreeGraph from '../d3_util/Util_indent_tree.js'; 
-import * as indenttagGraph from '../d3_util/Util_indent_tag.js'; 
-import * as tabletoolGraph from '../d3_util/Util_table_tool.js'; 
+import * as indenttreeGraph from '../d3_util/Util_indent_tree.js';
+import * as indenttagGraph from '../d3_util/Util_indent_tag.js';
+import * as tabletoolGraph from '../d3_util/Util_table_tool.js';
 
-import {GRAPH_MAX_PROGRESS_COUNT, ANSWER_UNDERSTANDABILITY, understand_data} from '../data_obj/obj_d3.js'
+import {GRAPH_MAX_PROGRESS_COUNT, ANSWER_NODE_SEPERATOR, ANSWER_LINE_SEPERATOR,
+  ANSWER_UNDERSTANDABILITY, UNDERSTAND_DATA}
+  from '../data_obj/obj_d3.js'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee, faPlay, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 
-
+const GRAPH_SERIAL = {
+    PLAIN_TEXT: 0,
+    INDENTTREE: 1,
+    INDENTTAG: 2,
+    TABLE_TOOL: 3
+}
 
 class Dashboard extends Component {
   constructor(props){
@@ -27,13 +35,8 @@ class Dashboard extends Component {
     this.state = {
       loginData: {},
 
-      // progress: [{name: "indenttreeGraph", complete: false},{name: "indenttag", complete: false},{name: "tabletool", complete: false}],
       progress: [],
-      // indentTree: false,
-      // indentTag: false,
-      // tabletool: false,
-      graph: [false,false,false,false],
-      graphType: 1,
+      currentGraphType: GRAPH_SERIAL.INDENTTREE,
 
       currentAnswerClickCount: 0
     };
@@ -43,6 +46,7 @@ class Dashboard extends Component {
     this.createTableTool = this.createTableTool.bind(this);
 
     this.clearGraph = this.clearGraph.bind(this);
+    this.getFormedAnswer = this.getFormedAnswer.bind(this);
     this.updateOnGraphClick = this.updateOnGraphClick.bind(this);
     this.renderProgressbar = this.renderProgressbar.bind(this);
     this.updateGraphBoxHover = this.updateGraphBoxHover.bind(this);
@@ -50,7 +54,7 @@ class Dashboard extends Component {
 
   componentDidMount() {
     //set 1st graph
-    this.createGraph(3);
+    this.createGraph(this.state.currentGraphType);
     // this.createIndentTag();
     var {loginData, progress, indentTree, indentTag, tabletool, currentAnswerClickCount} = this.state;
     this.setState({progress:[{name: "indenttreeGraph", complete: indentTree},
@@ -58,30 +62,30 @@ class Dashboard extends Component {
       {name: "tabletool", complete: tabletool}]}
     )
   }
-
-  createGraph(graphType){
-    if(graphType == 1){
-      this.createIndentTree();
-    }else if(graphType == 2){
-      this.createIndentTag();
-    }else{
-      this.createTableTool();
-    }
-  }
-
+  //create all graph here
   createIndentTree(){
-    var graphData = understand_data;
+    var graphData = UNDERSTAND_DATA;
     indenttreeGraph.create(graphData, ".understandGraph", this.updateOnGraphClick.bind(this));
   }
 
   createIndentTag(){
-    var graphData = understand_data;
+    var graphData = UNDERSTAND_DATA;
     indenttagGraph.create(graphData, ".understandGraph", this.updateOnGraphClick.bind(this));
   }
 
   createTableTool(){
-    var graphData = understand_data;
+    var graphData = UNDERSTAND_DATA;
     tabletoolGraph.create(graphData, ".understandGraph", this.updateOnGraphClick.bind(this));
+  }
+
+  createGraph(currentGraphType){
+    if(currentGraphType == GRAPH_SERIAL.INDENTTREE){
+      this.createIndentTree();
+    }else if(currentGraphType == GRAPH_SERIAL.INDENTTAG){
+      this.createIndentTag();
+    }else if(currentGraphType == GRAPH_SERIAL.TABLE_TOOL){
+      this.createTableTool();
+    }
   }
 
   clearGraph(){
@@ -89,22 +93,28 @@ class Dashboard extends Component {
     graph.innerHTML = '';
   }
 
-  updateOnGraphClick(node){
-    console.log(node.data.name)
-    var trueAnswer = ANSWER_UNDERSTANDABILITY;
-    if(trueAnswer == node.data.name){
-      if(this.state.currentAnswerClickCount == 1){
-        //send post to save
-        this.setState({currentAnswerClickCount: 0})
+  getFormedAnswer(node) {
+    var nodes = [];
 
-        this.clearGraph();
-        //check GRAPH TYPE
-        var graphType = this.state.graphType;
-        this.setState({graphType: ++graphType})
-        this.createGraph(graphType);
-      }else{
-        this.setState({currentAnswerClickCount: ++this.state.currentAnswerClickCount})
-      }
+    while(node != null){
+      nodes.push(node.data.name);
+      node = node.parent;
+    }
+
+    nodes = nodes.reverse();
+    var answer = nodes.join(ANSWER_NODE_SEPERATOR);
+    answer += ANSWER_LINE_SEPERATOR;
+
+    return answer;
+  }
+
+  updateOnGraphClick(node){
+
+    if(ANSWER_UNDERSTANDABILITY == this.getFormedAnswer(node)){//correct!
+      this.clearGraph();
+      var nextGraphType = this.state.currentGraphType + 1;
+      this.setState({currentGraphType: nextGraphType});
+      this.createGraph(nextGraphType);
     }
   }
 
@@ -113,7 +123,7 @@ class Dashboard extends Component {
   }
 
   renderProgressbar(){
-      return this.state.progress.map((item,i) => <div className="Understand-progress-bar"> <FontAwesomeIcon icon={faCheckCircle} size="lg"/> {item.name}  </div>)
+      // return this.state.progress.map((item,i) => <div className="Understand-progress-bar"> <FontAwesomeIcon icon={faCheckCircle} size="lg"/> {item.name}  </div>)
   }
 
   render() {
