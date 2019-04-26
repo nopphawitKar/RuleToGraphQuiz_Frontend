@@ -4,24 +4,37 @@ html,body{
   font-family: 'Kanit', sans-serif;
 }
 
+#main_container {
+  max-width: 980px;
+  margin: 0 auto;
+  margin-top: 50px;
+}
+
+.container_board {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.container_block {
+  display: flex;
+  width: 440px;
+  /* margin-left: 10px!important;
+  margin-right: 10px!important; */
+}
+
+.progress-label {
+  float: right;
+}
+
+.nes-input-number {
+  text-align: right;
+}
+
+.nes-input-text {
+  text-align: left;
+}
 #root, .App{
   height: 100%;
-}
-
-.color-winter{
-  background-image: linear-gradient(#a1c4fd, #c2e9fb);
-}
-
-.color-whale{
-  background-image: linear-gradient(#a3bded, #6991c7);
-}
-
-.color-eternal{
-  background-image: linear-gradient(#09203f, #537895);
-}
-
-.color-azkaban{
-  background-image: linear-gradient(black, #485563);
 }
 
 .Head-bar {
@@ -252,6 +265,15 @@ g > .box_text {
   }
 }
 /*Dashboard*/
+.nes-container-center-overwrite {
+  max-width: 500px!important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nes-container-normal {
+  max-width: 500px!important;
+}
 .Dashboard-container {
   /*display: grid;
   grid-template-columns: auto auto auto auto;*/

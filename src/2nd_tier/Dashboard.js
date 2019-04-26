@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
-import { FilePond } from 'react-filepond';
-import 'filepond/dist/filepond.min.css';
-import request from "superagent";
 import '../App.css';
-import gankstercat from '../image/gankster_cat.png'
-import swatcat from '../image/swatcat.png'
-import salidcat from '../image/salid_cat.png'
-import babycats from '../image/baby_cats.png'
-import gankster_cat4 from '../image/gankster_cat4.gif'
+import { Container, Button, TextInput, Progress } from "nes-react";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import '../../node_modules/nes.css/css/nes.css';
+import * as Understand from '../3rd_tier/Understand.js';
+import * as Signup from './Signup.js';
 
 const HEADER_UNDERSTANDABILITY = "understandability test";
 
@@ -19,33 +16,53 @@ class Dashboard extends Component {
       loginData: {},
       catMessage: ""
     };
-    this.catSaid = this.catSaid.bind(this);
-    this.onCatClick = this.onCatClick.bind(this);
+    this.routLogin = this.routLogin.bind(this);
   }
 
-  catSaid(catMessage){
-    this.setState({
-      catMessage: catMessage
-    })
 
-  }
 
-  onCatClick(selectedMenu){
-    if(selectedMenu === HEADER_UNDERSTANDABILITY){
-      window.location.href = "http://localhost:3000/understand"
-    }
-  }
-
-  randomColor(){
-
+  routLogin(){
+    return <div>
+      <Container className='nes-container-center-overwrite' title='Log-in'>
+        <TextInput label='username' labelInline></TextInput>
+        <TextInput label='password' labelInline></TextInput>
+          <Link to='/understand'>
+              <Button primary>Log-in</Button>
+          </Link>
+      </Container>
+      <Container className='nes-container-center-overwrite'>If you dont have an account! Sign up here
+        <Link to='/signup'>
+          <Button primary>Sign-up</Button>
+        </Link>
+      </Container>
+    </div>;
   }
 
   render() {
     return (
-      <div className="Dashboard-container">
+
+        <div>
+          <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'/>
+          {this.routLogin()}
+          {/*<Container className='nes-container-center-overwrite' title='Log-in'>
+            <TextInput label='username' labelInline></TextInput>
+            <TextInput label='password' labelInline></TextInput>
+            <Button primary>Log-in</Button>
+          </Container>
+          <Container className='nes-container-center-overwrite'>If you dont have an account! Sign up here
+            <Button primary>Sign-up</Button>
+          </Container>*/}
+          {/*<div id='main_container'>
+            <h2>All mission!</h2>
+            <Container>
+              <label className='progress-label'>8%</label>
+              <Progress success max='8' value='3'></Progress>
+              <Button primary>Start Mission</Button>
+            </Container>
+          </div>*/}
+        </div>
 
 
-      </div>
     );
   }
 }

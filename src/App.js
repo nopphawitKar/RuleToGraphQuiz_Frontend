@@ -19,7 +19,7 @@ class App extends Component {
       loginData: {},
       loginPass: false
     };
-    
+
     this.onUpdateLoginData = this.onUpdateLoginData.bind(this);
   }
 
@@ -69,13 +69,13 @@ class App extends Component {
     return (
       <div className="App">
       <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet"/>
+      <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'/>
       <Router>
-      <div className="App-container">
-      <Route exact path="/" render={() => (this.state.loginData==undefined ? (<Login onUpdateLoginData={this.onUpdateLoginData}/>) : (<Dashboard/>))}>
-      </Route>
-        <Route exact path="/understand" render={() => <Understandability></Understandability>}></Route>
-
-      </div>
+        <div className="App-container">
+          <Route exact path="/" render={() => (this.state.loginData==undefined ? (<Login onUpdateLoginData={this.onUpdateLoginData}/>) : (<Dashboard/>))}></Route>
+          <Route exact path="/understand" render={() => <Understandability></Understandability>}></Route>
+          <Route exact path="/signup" render={() => <Signup></Signup>}></Route>
+        </div>
       </Router>
         {/*<Route path="/Dashboard" render={() => (
           this.state.loginData==undefined ? (

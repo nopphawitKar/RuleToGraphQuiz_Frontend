@@ -1,72 +1,92 @@
 ﻿import React, { Component } from 'react';
+import { Container, Button, TextInput, Progress, Radios } from "nes-react";
 import '../App.css';
 
 import bcrypt from 'bcryptjs';
+import {SERVER, SERVER_ADD_USER, URL_HOME,METHOD_POST, HEADER_JSON} from '../data_obj/url.js'
 
-const METHOD_POST = 'POST';
-const HEADER_JSON = {
-                      'Accept': 'application/json',
-                      'Content-Type': 'application/json'
-                    };
-const URL_ADD_NEW_USER = 'http://localhost:3001/users/addNewUser';
+const URL_ADD_NEW_USER = SERVER + SERVER_ADD_USER;
+const GENDER = [{value: 'male', label: 'male'}, {value: 'female', label: 'female'}]
 
 class Signup extends Component {
   constructor(props){
     super(props);
     this.state = {
-      username: "",
+      name: "",
       password: "",
-      name: ""
+      gender: GENDER[0].value,
+      age: 0,
+      exp: 0
     };
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.encryptPassword = this.encryptPassword.bind(this);
-    this.check = this.check.bind(this);
+
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
-    const data = new FormData(event.target);
-    var hash = this.encryptPassword(event.target['password'].value);
+
+
+
+
+  handleSubmit() {
+    const data = new FormData();
+    var hashPassword = this.encryptPassword(this.state.password);
     fetch(URL_ADD_NEW_USER, {
       method: METHOD_POST,
       headers: HEADER_JSON,
-      body: JSON.stringify({name: event.target['username'].value,
-                            password:hash ,
-                            firstname: event.target['firstname'].value,
-                            lastname: event.target['lastname'].value}),
-    });
+      body: JSON.stringify({name: this.state.name,
+                            password: hashPassword ,
+                            gender: this.state.gender,
+                            age: this.state.age,
+                            exp: this.state.exp
+                          })
+    }).then(response => {window.location.href = URL_HOME;});
   }
 
-  check(){
-      bcrypt.compare("yyy", "$2a$10$3nmImJyRXxz2DUI2SRnHtOHsLRkefWbKUb5Y4EwNh6XxRpJTQbaFW", function(err, res) {
-        // res === true
-        console.log(res);
-    });
-  }
-
-  encryptPassword(password){
+  encryptPassword = (password) => {
     var salt = bcrypt.genSaltSync(10);
     var hash = bcrypt.hashSync(password, salt);
     return hash;
   }
 
+  setUserName = e => {
+    this.setState({name: e.target.value});
+  }
+
+  setPassword = e => {
+    var rawPassword = e.target.value;
+    this.setState({password: rawPassword})
+  }
+
+  onGenderChange= (genderValue) =>{
+    this.setState({gender: genderValue});
+    console.log(this.state.gender)
+  }
+
+  setAge = e => {
+    var age = e.target.value;
+    this.setState({age: age});
+  }
+
+  setDataAssoExp = e => {
+    var exp = e.target.value;
+    this.setState({exp: exp});
+  }
+
   render() {
-    let files = this.state.files;
-    let style = {
-        addFileBtn: {
-            'marginTop': '15px',
-        },
-    };
     return (
-        <div className="Signup-container">
-          <form className="Signup-form"  onSubmit={this.handleSubmit}>
-            <input id="username" name="username" type="text" className="Signup-input-field"  placeholder="User Name"/>
-            <input id="password" name="password" type="text" className="Signup-input-field"  placeholder="Password"/>
-            <input id="firstname" name="firstname" type="text" className="Signup-input-field"  placeholder="First name"/>
-            <input id="lastname" name="lastname" type="text" className="Signup-input-field"  placeholder="Last name"/>
-            <button className="Signup-button">Signup</button>
-          </form>
-          {/*<button className="check" onClick={this.check}>check</button>*/}
+
+        <div>
+          <Container  title='Signup' className='nes-container-center-overwrite'>
+            <TextInput label='username' className='nes-input-text' onChange={this.setUserName}></TextInput>
+            <TextInput label='password' className='nes-input-text' onChange={this.setPassword} type='password'></TextInput>
+            <div>
+              <label>Gender</label>
+              <Radios options={GENDER} selectedValue={this.state.gender} onValueChange={this.onGenderChange}></Radios>
+            </div>
+            <TextInput value={this.state.age} label='age' className='nes-input-number' onChange={this.setAge} type='number'></TextInput>
+            <TextInput value={this.state.exp} label='How many years have you know data association?'
+              className='nes-input-number' onChange={this.setDataAssoExp} type='number'></TextInput>
+            <Button onClick={this.handleSubmit} primary>Save data</Button>
+      </Container>
         </div>
     );
   }
