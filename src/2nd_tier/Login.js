@@ -1,57 +1,80 @@
 import React, { Component } from 'react';
 import '../App.css';
-import babycats from '../image/baby_cats.png'
+import { Container, Button, TextInput, Progress, Radios } from "nes-react";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import bcrypt from 'bcryptjs';
+import {SERVER, SERVER_ADD_USER, URL_HOME,METHOD_POST, HEADER_JSON, URL_UNDERSTAND}  from '../data_obj/url.js'
 
 class Login extends Component {
   constructor(props){
     super(props);
     this.state = {
-      hashedPassword: "xxx",
-      loginPass: false
+
+      name: '',
+      password: ''
     };
-    this.authen = this.authen.bind(this);
   }
 
+  // setCookie = (name, value, mins) => {
+  //   var date = new Date();
+  //   date.setTime(d.getTime() + (mins*60*1000));
+  //   var expires = "expires="+ d.toUTCString();
+  //   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  // }
+  authen = () => {
 
-  authen(event){
-    event.preventDefault();
-    this.password = event.target['password'].value;
-    const theThis = this;
+    const data = new FormData();
+    var hashPassword = this.encryptPassword(this.state.password);
+    fetch(SERVER + '/users/authen', {
+      method: METHOD_POST,
+      headers: HEADER_JSON,
+      body: JSON.stringify({name: this.state.name,
+                            password: hashPassword ,
+                          })
+    }).then(response =>
+      response.json().then(data => ({
+          data: data,
+          status: response.status
+      }))
+    ).then(response => {
+        if(response.data){
+          var tokenId = response.data._id;
+          // console.log(response);
 
-    fetch("http://localhost:3001/username/"+event.target['username'].value)
-      .then(response => response.json())
-      .then( function (user) {
-        // var user = user.replace("_id", "id");
-        var inputPassword = theThis.password;//event.target['password'].value;
-        bcrypt.compare(inputPassword, user.password, function(err, res) {
-          // res === true
-          if(res){
-            // theThis.setState({loginPass: true});
-            theThis.completeLogin(user);
-          }
-        });
-      });
-  }
+          //set cookie for tokenId
+          var mins = 20;
+          var date = new Date();
+          date.setTime(date.getTime() + (mins*60*1000));
+          var expires = "expires="+ date.toUTCString();
+          document.cookie = 'tokenId' + "=" + tokenId + ";" + expires + ";path=/";
 
-  completeLogin(user){
-    this.user = user;
-    const theThis = this;
-    fetch('http://localhost:3001/login', {
-      method: 'POST',
-      headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(user)
-    })
-      .then(response => response.json())
-      .then(function (loginStatus){
-        if(loginStatus.login){
-          theThis.props.onUpdateLoginData(theThis.user);
+          window.location.href = URL_UNDERSTAND;
         }
-      });
+    }).catch(error => {
+      console.log('xxx yyy ' + error);
+    });
+  }
+
+
+  // if (!response.ok) {
+  //       throw Error(response.statusText);
+  //   }
+  //   return response;
+
+  encryptPassword = (password) => {
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(password, salt);
+    return hash;
+  }
+
+  setUserName = e => {
+    this.setState({name: e.target.value});
+  }
+
+  setPassword = e => {
+    var rawPassword = e.target.value;
+    this.setState({password: rawPassword})
   }
 
   render() {
@@ -62,17 +85,14 @@ class Login extends Component {
         },
     };
     return (
-        <div className="Login-container">
-          <img src={babycats} alt="Smiley face"/>
-          <form className="Login-form"  onSubmit={this.authen}>
-            <label >Username: </label>
-            <input id="username" name="username" type="text" className="Login-input-field"  placeholder="User Name"/>
-            <label >Password: </label>
-            <input id="password" name="password" type="text" className="Login-input-field"  placeholder="Password"/>
-            <button className="Login-button">Login</button>
-          </form>
-          {this.state.loginPass ? <div>pass</div> : null}
-        </div>
+      <div>
+        <Container  title='Login' className='nes-container-center-overwrite'>
+          <TextInput label='username' className='nes-input-text' onChange={this.setUserName}></TextInput>
+          <TextInput label='password' className='nes-input-text' onChange={this.setPassword} type='password'></TextInput>
+
+          <Button onClick={this.authen} primary>Login</Button>
+        </Container>
+      </div>
     );
   }
 }

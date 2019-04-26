@@ -4,7 +4,8 @@ import { Container, Button, TextInput, Progress } from "nes-react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import '../../node_modules/nes.css/css/nes.css';
 import * as Understand from '../3rd_tier/Understand.js';
-import * as Signup from './Signup.js';
+import Signup from './Signup.js';
+import Login from './Login.js';
 
 const HEADER_UNDERSTANDABILITY = "understandability test";
 
@@ -23,13 +24,7 @@ class Dashboard extends Component {
 
   routLogin(){
     return <div>
-      <Container className='nes-container-center-overwrite' title='Log-in'>
-        <TextInput label='username' labelInline></TextInput>
-        <TextInput label='password' labelInline></TextInput>
-          <Link to='/understand'>
-              <Button primary>Log-in</Button>
-          </Link>
-      </Container>
+      <Login></Login>
       <Container className='nes-container-center-overwrite'>If you dont have an account! Sign up here
         <Link to='/signup'>
           <Button primary>Sign-up</Button>
