@@ -15,27 +15,22 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
+      loginStatus: false,
       files: [],
       loginData: {},
       loginPass: false
     };
 
-    this.onUpdateLoginData = this.onUpdateLoginData.bind(this);
+    // this.onUpdateLoginData = this.onUpdateLoginData.bind(this);
+    this.updateLoginStatus = this.updateLoginStatus.bind(this);
   }
 
   componentDidMount() {
-    var loginData = sessionStorage.getItem('loginData');
-    if(loginData!=undefined){
-      this.setState({loginData: JSON.parse(loginData)});
-    }
+    
   }
 
-  onUpdateLoginData(userData){
-    sessionStorage.setItem('loginData', JSON.stringify(userData));
-    this.setState({loginData: userData});
-    this.setState({loginPass: true})
-    window.location.href = "http://localhost:3000/Dashboard/";
-    console.log(this.state.loginData)
+  updateLoginStatus(isLogin) {
+    this.setState({loginStatus: isLogin});
   }
 
   render() {
@@ -49,10 +44,10 @@ class App extends Component {
       <div className="App">
       <link href="https://fonts.googleapis.com/css?family=Kanit" rel="stylesheet"/>
       <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'/>
-        <Header></Header>
+        <Header updateLoginStatus={this.updateLoginStatus} loginStatus={this.state.loginStatus}></Header>
         <Router>
           <div className="App-container">
-            <Route exact path="/" render={() => (this.state.loginData==undefined ? (<Login onUpdateLoginData={this.onUpdateLoginData}/>) : (<Dashboard/>))}></Route>
+            <Route exact path="/" render={() => <Dashboard updateLoginStatus={this.updateLoginStatus} loginStatus={this.state.loginStatus}></Dashboard>}></Route>
             <Route exact path="/understand" render={() => <Understandability></Understandability>}></Route>
             <Route exact path="/signup" render={() => <Signup></Signup>}></Route>
           </div>

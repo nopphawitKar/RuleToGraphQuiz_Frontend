@@ -22,7 +22,7 @@ html,body{
   margin-right: 10px!important; */
 }
 
-.progress-label {
+.right {
   float: right;
 }
 
@@ -153,6 +153,7 @@ g > .box_text {
 /*App*/
 .App-container {
   height: 100%;
+  margin-top: 200px;
 }
 
 /*Signup*/
@@ -330,7 +331,9 @@ g > .box_text {
   min-width: 1000px;
   max-width: 1000px;
   height: 100%;
-  float: left;
+  /* float: left; */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .Understand-progress-box {

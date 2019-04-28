@@ -13,18 +13,27 @@ class Dashboard extends Component {
   constructor(props){
     super(props);
     this.state = {
+      loginStatus: false,
+      a: 'xxx',
       files: [],
       loginData: {},
       catMessage: ""
     };
     this.routLogin = this.routLogin.bind(this);
+    this.updateLoginStatus = this.updateLoginStatus.bind(this);
   }
 
+  componentDidMount() {
+    this.setState({loginStatus: this.props.loginStatus});
+  }
 
+  updateLoginStatus(status){
+    this.props.updateLoginStatus(status);
+  }
 
-  routLogin(){
+  routLogin = () => {
     return <div>
-      <Login></Login>
+      <Login updateLoginStatus={this.updateLoginStatus} loginStatus={this.state.loginStatus}></Login>
       <Container className='nes-container-center-overwrite'>If you dont have an account! Sign up here
         <Link to='/signup'>
           <Button primary>Sign-up</Button>

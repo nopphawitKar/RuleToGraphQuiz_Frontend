@@ -4,7 +4,7 @@ import { Container, Button, TextInput, Progress, Radios } from "nes-react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import bcrypt from 'bcryptjs';
-import {SERVER, SERVER_ADD_USER, URL_HOME,METHOD_POST, HEADER_JSON, URL_UNDERSTAND}  from '../properties/url.js'
+import {SERVER, SERVER_ADD_USER, URL_HOME,METHOD_POST, HEADER_JSON, URL_UNDERSTAND, COOKIE_TOKEN_ID}  from '../properties/url.js'
 
 class Login extends Component {
   constructor(props){
@@ -23,7 +23,7 @@ class Login extends Component {
   //   document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
   // }
   authen = () => {
-
+    var classScope = this;
     const data = new FormData();
     var hashPassword = this.encryptPassword(this.state.password);
     fetch(SERVER + '/users/authen', {
@@ -47,12 +47,13 @@ class Login extends Component {
           var date = new Date();
           date.setTime(date.getTime() + (mins*60*1000));
           var expires = "expires="+ date.toUTCString();
-          document.cookie = 'tokenId' + "=" + tokenId + ";" + expires + ";path=/";
+          document.cookie = COOKIE_TOKEN_ID + "=" + tokenId + ";" + expires + ";path=/";
 
+          this.props.updateLoginStatus(true);
           window.location.href = URL_UNDERSTAND;
         }
     }).catch(error => {
-      console.log('xxx yyy ' + error);
+      console.log('login page ' + error);
     });
   }
 
@@ -78,12 +79,6 @@ class Login extends Component {
   }
 
   render() {
-    let files = this.state.files;
-    let style = {
-        addFileBtn: {
-            'marginTop': '15px',
-        },
-    };
     return (
       <div>
         <Container  title='Login' className='nes-container-center-overwrite'>
