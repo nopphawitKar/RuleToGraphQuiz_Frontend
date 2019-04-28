@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom';
 import { Balloon, Button } from "nes-react";
 import * as cookies from "../resource/util/cookies.js"
+import {SERVER, SERVER_ADD_USER, URL_HOME,METHOD_POST, HEADER_JSON, URL_UNDERSTAND
+  , COOKIE_TOKEN_ID, SLASH, SERVER_USER}  from '../properties/url.js'
 
 import bear from '../resource/image/bear.png'
 import lion from '../resource/image/lion.png'
@@ -20,7 +22,7 @@ class Header extends Component {
   constructor(props){
     super(props);
     this.state = {
-      username: 'Signup/Login',
+      username: null,
       loginStatus: BUTTON_LOGIN,
       loginPass: false
     };
@@ -29,6 +31,7 @@ class Header extends Component {
 
   componentDidMount = () => {
     window.addEventListener('scroll', this.onScroll);
+    this.setHeaderLogInElement();
   }
 
   onScroll= () =>{
@@ -43,26 +46,22 @@ class Header extends Component {
   setHeaderLogInElement = () => {
     var tokenId = cookies.getCookie();
     if(!tokenId){
-      this.setState({username: 'Signup/Login'})
+      this.setState({username: null})
+    }else{
+      console.log(tokenId + 'header 56')
+      cookies.getUserByTokenId(tokenId, this.userNameCallback);
     }
-    // var user = cookies.getUserByTokenId(tokenId);
-    // if(!user){
-    //   return 'Signup/Login';
-    // }
-    // var userName = user.username;
-    // return userName;
-    // return Promise.all([cookies.getUserByTokenId(tokenId)])[0]
 
-    cookies.getUserByTokenId(tokenId, this.userNameCallback);
   }
+
   userNameCallback = (username) => {
     this.setState({username: username})
     this.setState({loginStatus: BUTTON_LOGOUT});
   }
 
   logout = () => {
-    this.props.updateLoginStatus(false);
     cookies.logout();
+    window.location.href = URL_HOME;
   }
 
   render() {
@@ -77,8 +76,8 @@ class Header extends Component {
           </div>
           <div className='header_login'>
             {/*<p>Nopphawit</p>*/}
-            <p>Welcome {this.props.loginStatus? this.state.username : NO_ONE}</p>
-            <Button onClick={this.logout} warning>{this.props.loginStatus? BUTTON_LOGOUT: BUTTON_LOGIN}</Button>
+            <p>Welcome {this.state.username? this.state.username : NO_ONE}</p>
+            <Button onClick={this.logout} warning>{this.state.username? BUTTON_LOGOUT: BUTTON_LOGIN}</Button>
           </div>
         </header>
       </div>

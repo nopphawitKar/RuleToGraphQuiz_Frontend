@@ -2,7 +2,7 @@
 import { FilePond } from 'react-filepond';
 import { BrowserRouter as Router, Route, Link, Redirect } from 'react-router-dom';
 import './App.css';
-import Header from './web_component/header.js'
+import Header from './web_component/header.js';
 
 
 import Signup from "./authen/Signup.js";
@@ -26,7 +26,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    
+
   }
 
   updateLoginStatus(isLogin) {
@@ -47,7 +47,7 @@ class App extends Component {
         <Header updateLoginStatus={this.updateLoginStatus} loginStatus={this.state.loginStatus}></Header>
         <Router>
           <div className="App-container">
-            <Route exact path="/" render={() => <Dashboard updateLoginStatus={this.updateLoginStatus} loginStatus={this.state.loginStatus}></Dashboard>}></Route>
+            <Route exact path="/" render={() => <Dashboard></Dashboard>}></Route>
             <Route exact path="/understand" render={() => <Understandability></Understandability>}></Route>
             <Route exact path="/signup" render={() => <Signup></Signup>}></Route>
           </div>

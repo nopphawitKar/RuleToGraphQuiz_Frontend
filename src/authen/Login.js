@@ -49,7 +49,6 @@ class Login extends Component {
           var expires = "expires="+ date.toUTCString();
           document.cookie = COOKIE_TOKEN_ID + "=" + tokenId + ";" + expires + ";path=/";
 
-          this.props.updateLoginStatus(true);
           window.location.href = URL_UNDERSTAND;
         }
     }).catch(error => {
