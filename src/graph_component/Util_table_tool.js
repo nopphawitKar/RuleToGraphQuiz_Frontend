@@ -1,10 +1,13 @@
 import * as d3 from "d3";
 import { scaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
+import '../App.css';
 
 const BOX_WIDTH = 200;
-const BOX_HIGHT = 100;
-const TEXT_PADDING = BOX_HIGHT / 2;
+const BOX_HIGHT = 150;
+const MAX_BOX_PER_LINE = 5;
+const TEXT_PADDING = BOX_HIGHT/2;//BOX_HIGHT / 2;
+const TEXT_PADDING_FOR_LONG_TEXT = 20;
 const ORIGINAL_DEPTH = 0;
 
 const TITLE_HIGHT = 25;
@@ -30,23 +33,21 @@ attributes.texts = [];
 // var selectData = ['softdrink', 'cola', 'paper']
 
 export function create(treeData, selector, updater) {
-	var margin = {top: 20, right: 90, bottom: 30, left: 90},
-			width = 960 - margin.left - margin.right,
-			height = 500 - margin.top - margin.bottom;
+	// var margin = {top: 20, right: 90, bottom: 30, left: 90},
+	// 		width = 1000,//960 - margin.left - margin.right,
+	// 		height = 700;//500 - margin.top - margin.bottom;
 
 	var treeDataCopy = Object.assign({}, treeData);
 	var rootNode = d3.hierarchy(treeDataCopy)
 
 	rootNode.sum(function(d) {
-	  // return d.value;
-		var fakeValue = 1;
-		return fakeValue;
+	  return d.name;
 	});
 
 	function initiate(depth) {
 		var margin = {top: 20, right: 90, bottom: 30, left: 90},
-				width = 960 - margin.left - margin.right,
-				height = 500 - margin.top - margin.bottom;
+				width = 1000,//960 - margin.left - margin.right,
+				height = 3000;//500 - margin.top - margin.bottom;
 
 		var	x = scaleLinear().range([0, width]),
 	      y = scaleLinear().range([0, height]);
@@ -63,8 +64,6 @@ export function create(treeData, selector, updater) {
 		  .attr('width', function(d) { return BOX_WIDTH})
 		  .attr('height', function(d) { return BOX_HIGHT })
 			.attr('y', function(d) {return TITLE_HIGHT + 0;})
-			// .attr('rx', function(d) {return 20;})
-			// .attr('ry', function(d) {return 20;})
 			.attr("id", function(d,i){
 				console.log(i + ':' + d.data.name+' hierarchy ' + d.depth);
 				return "tabletool" + i
@@ -126,14 +125,14 @@ export function create(treeData, selector, updater) {
 			.attr('class', 'box_text')
 			.attr('text-anchor', () => { return 'middle';})
 			.attr('alignment-baseline', () => { return 'central';})
-			.attr('x', () => { return (index * BOX_WIDTH) + (BOX_WIDTH/2);})
-			.attr('y', () => {
-				if(node.depth <= clickedNode.depth){//ancestors and me lvl
-					return TITLE_HIGHT + 0 + TEXT_PADDING;
-				}else{//children lvl
-					return (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + TEXT_PADDING;
-				}
-			})
+			// .attr('x', () => { return (index * BOX_WIDTH) + (BOX_WIDTH/2);})
+			// .attr('y', () => {
+			// 	if(node.depth <= clickedNode.depth){//ancestors and me lvl
+			// 		return TITLE_HIGHT + 0 + TEXT_PADDING;
+			// 	}else{//children lvl
+			// 		return (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + TEXT_PADDING;
+			// 	}
+			// })
 			// .text(()=>{
 			// 	// var childrenCount = (node.children)? node.children.length : 0;
 			// 	return  node.data.name
@@ -149,14 +148,20 @@ export function create(treeData, selector, updater) {
 				var html = '';
 				var titleName = node.data.name;
 				var title_parts = titleName.split(",");
-				var beginOfX = (index * BOX_WIDTH) + (BOX_WIDTH/2);
+				var beginOfX = (index * BOX_WIDTH) + (BOX_WIDTH/2) - (Math.floor(index/MAX_BOX_PER_LINE)*1000);
 				var beginOfY = 0;
+				var yTextPadding = TEXT_PADDING;
 
 				if(node.depth <= clickedNode.depth){//ancestors and me lvl
+					// beginOfY = TITLE_HIGHT + 0 + TEXT_PADDING;
 					beginOfY = TITLE_HIGHT + 0 + TEXT_PADDING;
 
 				}else{//children lvl
-					beginOfY = (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + TEXT_PADDING;
+					// beginOfY = (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + TEXT_PADDING + (Math.floor(index/MAX_BOX_PER_LINE)*BOX_HIGHT);
+					if(title_parts.length > 2){
+						yTextPadding = TEXT_PADDING_FOR_LONG_TEXT;
+					}
+					beginOfY = (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + yTextPadding + (Math.floor(index/MAX_BOX_PER_LINE)*BOX_HIGHT);
 				}
 				var textSpanYRange = BOX_HIGHT / title_parts.length;
 				// var y = beginOfY / title_parts.length
@@ -214,6 +219,7 @@ export function create(treeData, selector, updater) {
 
 	function onTabletoolClick(){
 		d3.selectAll('.tabletool_top').on('click', function(d) {
+
 			//update to react parent class
 			updater(d);
 			//kill same hierarchy when (select)
@@ -221,6 +227,11 @@ export function create(treeData, selector, updater) {
 			var ancestors = getAncestors(parent);
 			var children = parent.children || [];
 			var childDepth = parent.depth + 1;
+
+			//delete invisible box
+			// for(var i = ancestors.length-1;i>=0;i++){
+			// 	ancestors[i].parent c
+			// }
 
 			createBoxTexts(parent);
 
@@ -231,6 +242,13 @@ export function create(treeData, selector, updater) {
 				}
 				return COLOR_BOX;
 			})
+			// .attr('alien', (node) => {//x
+			//
+			// 	return 'parent: ' + (node.parent==null?'':node.parent.data.name) + ' me: ' + node.data.name;
+			//
+			//
+			//
+			// })
 			.style("display", (node) => {
 				var childIndex = children.findIndex((child, index) => {
 					return (child.data.name == node.data.name);
@@ -249,7 +267,7 @@ export function create(treeData, selector, updater) {
 					}
 					// return "";
 				}else{//child lvl
-					if(childIndex > -1 && node.depth == parent.depth +1){
+					if(childIndex > -1 && node.depth == parent.depth +1 && parent.data.name == node.parent.data.name){
 						return "";
 					}
 					return "none";
@@ -265,7 +283,7 @@ export function create(treeData, selector, updater) {
 				}else if(node.depth == childDepth){//child
 
 					if( childIndex > -1){
-						node.x = childIndex * BOX_WIDTH;
+						node.x = childIndex * BOX_WIDTH - (Math.floor(childIndex/MAX_BOX_PER_LINE) * 1000);
 					}
 					return node.x;
 				}else{//grand grand grand ... child
@@ -280,7 +298,9 @@ export function create(treeData, selector, updater) {
 				if (node.depth <= parent.depth){//parent and grand grand grand
 					return TITLE_HIGHT + 0;
 				}else{
-					return (2 * TITLE_HIGHT) + BOX_HIGHT;//childDepth * BOX_HIGHT;
+					var selectedElementHeight = (2 * TITLE_HIGHT) + BOX_HIGHT;
+					var newLineHeight = (Math.floor(childIndex/MAX_BOX_PER_LINE)*BOX_HIGHT);
+					return selectedElementHeight + newLineHeight;//childDepth * BOX_HIGHT;
 				}
 			})
 		});
