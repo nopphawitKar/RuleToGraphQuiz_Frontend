@@ -9,6 +9,7 @@ const ORIGINAL_DEPTH = 0;
 
 const TITLE_HIGHT = 25;
 const TITLE_WIDTH = 1000;
+// const TITLE_TEXT_LENGTH_LIMIT =
 const TITLE_TEXT_INDENT = 20;
 const TITLE_TEXT_FIRST = 'คุณลักษณะที่เลือกแล้ว';
 const TITLE_TEXT_CHOICE = 'คุณลักษณะที่สามารถเลือกได้';
@@ -64,7 +65,10 @@ export function create(treeData, selector, updater) {
 			.attr('y', function(d) {return TITLE_HIGHT + 0;})
 			// .attr('rx', function(d) {return 20;})
 			// .attr('ry', function(d) {return 20;})
-			.attr("id", function(d,i){ return "tabletool" + i})
+			.attr("id", function(d,i){
+				console.log(i + ':' + d.data.name+' hierarchy ' + d.depth);
+				return "tabletool" + i
+			})
 			.style("display", function(d) {
 		    if (d.depth > depth) {
 		      return "none";//nodes whose depth is more than 1 make its vanish
@@ -130,9 +134,37 @@ export function create(treeData, selector, updater) {
 					return (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + TEXT_PADDING;
 				}
 			})
-			.text(()=>{
-				var childrenCount = (node.children)? node.children.length : 0;
-				return  node.data.name
+			// .text(()=>{
+			// 	// var childrenCount = (node.children)? node.children.length : 0;
+			// 	return  node.data.name
+			// })
+			.html(()=>{
+				const TSPAN_HEAD = '<tspan';
+				const TSPAN_X = ' x=';
+				const TSPAN_Y =' y=';
+				const TSPAN_HEAD_CLOSE = '>';
+				const TSPAN_TAIL = '</tspan>';
+				const TSPAN_GAP = 25;
+
+				var html = '';
+				var titleName = node.data.name;
+				var title_parts = titleName.split(",");
+				var beginOfX = (index * BOX_WIDTH) + (BOX_WIDTH/2);
+				var beginOfY = 0;
+
+				if(node.depth <= clickedNode.depth){//ancestors and me lvl
+					beginOfY = TITLE_HIGHT + 0 + TEXT_PADDING;
+
+				}else{//children lvl
+					beginOfY = (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + TEXT_PADDING;
+				}
+				var textSpanYRange = BOX_HIGHT / title_parts.length;
+				// var y = beginOfY / title_parts.length
+				for(var i=0;i<title_parts.length;i++){
+					var y = beginOfY + (i*TSPAN_GAP);
+					html += TSPAN_HEAD + TSPAN_X + beginOfX + TSPAN_Y + y + TSPAN_HEAD_CLOSE+ title_parts[i] + (i == title_parts.length -1 ? '':',') + TSPAN_TAIL;
+				}
+				return  html;
 			})
 		}
 
@@ -181,7 +213,6 @@ export function create(treeData, selector, updater) {
 	}
 
 	function onTabletoolClick(){
-		// resetBoxTexts();
 		d3.selectAll('.tabletool_top').on('click', function(d) {
 			//update to react parent class
 			updater(d);
@@ -218,7 +249,7 @@ export function create(treeData, selector, updater) {
 					}
 					// return "";
 				}else{//child lvl
-					if(childIndex > -1){
+					if(childIndex > -1 && node.depth == parent.depth +1){
 						return "";
 					}
 					return "none";
