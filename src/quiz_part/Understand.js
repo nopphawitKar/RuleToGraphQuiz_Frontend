@@ -56,7 +56,7 @@ class Understand extends Component {
   correctProcess(){
     toast.success('Correct! Next Question!', {
       position: toast.POSITION.TOP_RIGHT,
-      autoClose: 2
+      autoClose: 3
     });
   }
 

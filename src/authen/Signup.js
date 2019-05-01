@@ -17,10 +17,16 @@ class Signup extends Component {
     });
   }
 
+  duplicatedUser(){
+      toast.error(ERROR + 'Someone use this username already! Try new username', {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: false
+    });
+  }
   saveProcess(){
     toast.info('Saving data! Pleas wait.', {
       position: toast.POSITION.TOP_CENTER,
-      autoClose: false
+      autoClose: 3
     });
   }
 
@@ -55,7 +61,20 @@ class Signup extends Component {
                             age: this.state.age,
                             exp: this.state.exp
                           })
-    }).then(response => {window.location.href = URL_HOME;});
+    })
+    .then(response =>
+      response.json().then(data => ({
+          data: data,
+          status: response.status
+      }))
+    )
+    .then(response => {
+      // console.log('this.signup ' + response.status)
+      window.location.href = URL_HOME;
+    })
+    .catch((err) => {
+      this.duplicatedUser();
+    });;
   }
 
   encryptPassword = (password) => {
