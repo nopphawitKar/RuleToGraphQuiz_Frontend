@@ -18,13 +18,22 @@ import * as d3LogicManager from '../resource/util/d3Logic.js';
 import * as objManager from '../properties/obj_d3.js';
 import * as urlManager from '../properties/url.js';
 
+const MAX_QUESTION = 10;
+const MAX_GRAPH = 8;
+var questionCount = 0;
+const START_OF_LEARNABILITY = 4;
 const GRAPH_SERIAL = {
     PLAIN_TEXT: 0,
     INDENTTREE: 1,
     INDENTTAG: 2,
-    TABLE_TOOL: 3
+    TABLE_TOOL: 3,
+    L_PLAIN: 4,
+    L_INDENTTREE: 5,
+    L_INDENTTAG: 6,
+    L_TABLE_TOOL: 7
 }
-const COMMAND = "จงเลือก {begin,Popcorn,Softdrink} => {Movie_DVD}";
+const COMMAND = "จงเลือก ";
+// var currentQuestionText = '';
 const DOM_GRAPH_CLASS = ".understandGraph";
 var understandRef = this;
 var saveTimeChecker = 0;
@@ -45,7 +54,8 @@ class Understand extends Component {
       mouseCoords: [],
       clickedNodes: {},
       currentGraphType: GRAPH_SERIAL.PLAIN_TEXT,
-      currentAnswerClickCount: 0
+      currentAnswerClickCount: 0,
+      currentQuestionText: ''
     };
     this.createGraph = this.createGraph.bind(this);
 
@@ -54,6 +64,27 @@ class Understand extends Component {
   }
 
   componentDidMount() {
+    //return to home if dont log
+    var userId = cookieManager.getCookie();
+    if(!userId){
+      window.location = urlManager.URL_HOME;
+    }
+    //if u already done the question back to summary
+    fetch(urlManager.SERVER + '/users/' + userId + '/getAllScores', {
+      method: urlManager.METHOD_GET,
+      headers: urlManager.HEADER_JSON
+    })
+    .then(response => response.json())
+    .then((response)=> {
+
+        if(response.length == MAX_GRAPH){
+          window.location = urlManager.URL_SUMMARY;
+        }
+
+    })
+    .catch((err) => {
+      console.log(err)
+    });
     //set currentGraphType
     var classScope = this;
     var userId = cookieManager.getCookie();
@@ -65,13 +96,23 @@ class Understand extends Component {
     .then((response)=> {
 
         var currentGraphType = response.currentGraph + 1;
+
+        var isUnderstand = this.isUnderstand(currentGraphType);
+        var initiateQuestion = (isUnderstand)? objManager.ANSWER_UNDERSTANDABILITY: objManager.ANSWER_LEARNABILITY[0];
+        this.setState({
+          currentQuestionText: componentManager.changeSecretToQuestion(initiateQuestion)
+        })
+
         classScope.setState({currentGraphType : currentGraphType});
         classScope.createGraph(currentGraphType);
         classScope.timedCount();
         componentManager.addKeyDownListener();
 
     })
-    .catch(function(err) {
+    .catch((err) => {
+      this.setState({
+        currentQuestionText: componentManager.changeSecretToQuestion(objManager.ANSWER_UNDERSTANDABILITY)
+      })
       classScope.createGraph(classScope.state.currentGraphType);
       classScope.timedCount();
       componentManager.addKeyDownListener();
@@ -84,6 +125,7 @@ class Understand extends Component {
   }
   //create all graph here
   createGraph(currentGraphType){
+
     var graphData = objManager.UNDERSTAND_DATA;
     if(currentGraphType == GRAPH_SERIAL.PLAIN_TEXT){
       plaintextGraph.create(graphData, DOM_GRAPH_CLASS, this.updateOnGraphClick.bind(this));
@@ -93,10 +135,24 @@ class Understand extends Component {
       indenttagGraph.create(graphData, DOM_GRAPH_CLASS, this.updateOnGraphClick.bind(this));
     }else if(currentGraphType == GRAPH_SERIAL.TABLE_TOOL){
       tabletoolGraph.create(graphData, DOM_GRAPH_CLASS, this.updateOnGraphClick.bind(this));
+
+
+    }else if(currentGraphType == GRAPH_SERIAL.L_PLAIN){
+      var graphData = objManager.LEARN_DATA;
+      plaintextGraph.create(graphData, DOM_GRAPH_CLASS, this.updateOnGraphClick.bind(this));
+    }else if(currentGraphType == GRAPH_SERIAL.L_INDENTTREE){
+      var graphData = objManager.LEARN_DATA;
+      indenttreeGraph.create(graphData, DOM_GRAPH_CLASS, this.updateOnGraphClick.bind(this), null, 700);
+    }else if(currentGraphType == GRAPH_SERIAL.L_INDENTTAG){
+      var graphData = objManager.LEARN_DATA;
+      indenttagGraph.create(graphData, DOM_GRAPH_CLASS, this.updateOnGraphClick.bind(this));
+    }else if(currentGraphType == GRAPH_SERIAL.L_TABLE_TOOL){
+      var graphData = objManager.LEARN_DATA;
+      tabletoolGraph.create(graphData, DOM_GRAPH_CLASS, this.updateOnGraphClick.bind(this));
     }
   }
 
-  saveScore = () =>{
+  saveScore = (isLearnability) =>{
     var graphScore = {};
     Object.assign(graphScore, objManager.graphFormat);
 
@@ -132,17 +188,6 @@ class Understand extends Component {
       console.log(error);
       this.canNotSendDataError();
     });
-    // .then(response => {
-    //     if(response.data){
-    //       console.log(response.data);
-    //       var scoreData = response.data;
-    //       this.clearGraph();
-    //       var nextGraphType = scoreData.currentGraph + 1;//this.state.currentGraphType + 1;
-    //       this.setState({currentGraphType: nextGraphType});
-    //       this.createGraph(nextGraphType);
-    //     }
-    // })
-
   }
 
   clearGraph(){
@@ -170,19 +215,45 @@ class Understand extends Component {
 
     return answer;
   }
-
+  isUnderstand = (graphType) => {
+    if(graphType < START_OF_LEARNABILITY){
+      return true;
+    }
+    return false;
+  }
+  changeQuestionText = () => {
+    var secret = objManager.ANSWER_UNDERSTANDABILITY;
+    var currentGraphType = this.state.currentGraphType;
+    if(!this.isUnderstand(currentGraphType)){
+      secret = objManager.ANSWER_LEARNABILITY[questionCount];
+    }
+    this.setState({
+      currentQuestionText: componentManager.changeSecretToQuestion(secret)
+    })
+  }
   updateOnGraphClick(node){
     var clickedNode = d3LogicManager.getClickedNode(node);
     var clickedNodes = this.state.clickedNodes;//[clickedNodeCount] = clickedNode;
     clickedNodes[clickedNodeCount++] = clickedNode;
     this.setState({clickedNodes: clickedNodes});
 
-    if(objManager.ANSWER_UNDERSTANDABILITY == this.getFormedAnswer(node)){//correct!
+    var IS_UNDERSTAND = this.isUnderstand(this.state.currentGraphType);
+
+    if(IS_UNDERSTAND && objManager.ANSWER_UNDERSTANDABILITY == this.getFormedAnswer(node)){//correct!
+      this.changeQuestionText();
       this.saveScore();
-      // this.clearGraph();
-      // var nextGraphType = this.state.currentGraphType + 1;
-      // this.setState({currentGraphType: nextGraphType});
-      // this.createGraph(nextGraphType);
+    }else if(!IS_UNDERSTAND){
+      console.log(objManager.ANSWER_LEARNABILITY[questionCount])
+      if(objManager.ANSWER_LEARNABILITY[questionCount] == this.getFormedAnswer(node)){
+        if(questionCount < MAX_QUESTION-1){
+          questionCount++;
+          this.changeQuestionText();
+          window.scrollTo(0, 0);
+        }else{
+          this.saveScore();
+
+        }
+      }
     }
   }
 
@@ -216,8 +287,7 @@ class Understand extends Component {
           <div className="Head-bar">
             <div className="text">Understand</div>
           </div>
-
-          <div className="Question-text">{COMMAND}</div>
+          <div className="Question-text">{COMMAND + this.state.currentQuestionText}</div>
           <div id="graph" className="understandGraph" style={{visibility: 'visible'}} onClick={this.onHover} onMouseMove={this.onHover}></div>
         </div>
         <Icon className='timer-icon' icon='trophy' medium></Icon>

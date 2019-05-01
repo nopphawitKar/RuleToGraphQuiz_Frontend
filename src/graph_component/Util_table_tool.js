@@ -3,6 +3,8 @@ import { scaleLinear } from 'd3-scale';
 import { select } from 'd3-selection';
 import '../App.css';
 
+const SVG_WIDTH = 1000;
+const SVG_HIGHT = 3000;
 const BOX_WIDTH = 200;
 const BOX_HIGHT = 150;
 const MAX_BOX_PER_LINE = 5;
@@ -33,10 +35,6 @@ attributes.texts = [];
 // var selectData = ['softdrink', 'cola', 'paper']
 
 export function create(treeData, selector, updater) {
-	// var margin = {top: 20, right: 90, bottom: 30, left: 90},
-	// 		width = 1000,//960 - margin.left - margin.right,
-	// 		height = 700;//500 - margin.top - margin.bottom;
-
 	var treeDataCopy = Object.assign({}, treeData);
 	var rootNode = d3.hierarchy(treeDataCopy)
 
@@ -46,11 +44,11 @@ export function create(treeData, selector, updater) {
 
 	function initiate(depth) {
 		var margin = {top: 20, right: 90, bottom: 30, left: 90},
-				width = 1000,//960 - margin.left - margin.right,
-				height = 3000;//500 - margin.top - margin.bottom;
+				width = SVG_WIDTH,//960 - margin.left - margin.right,
+				height = SVG_HIGHT;//500 - margin.top - margin.bottom;
 
-		var	x = scaleLinear().range([0, width]),
-	      y = scaleLinear().range([0, height]);
+		// var	x = scaleLinear().range([0, width]),
+	  //     y = scaleLinear().range([0, height]);
 
 		d3.select(selector).append('svg')
 			.attr("width", width + margin.right + margin.left)
@@ -87,11 +85,6 @@ export function create(treeData, selector, updater) {
 			.attr('width', (d) => { return TITLE_WIDTH})
 			.attr('height', (d) => { return TITLE_HIGHT })
 
-
-			//save x y and boxvalue for creating text
-			// attributes.xCoordinates = [0]
-			// attributes.yCoordinates= [0]
-			// attributes.texts = [treeDataCopy.name]
 			createBoxTexts(rootNode, true);
 	}
 
@@ -125,18 +118,6 @@ export function create(treeData, selector, updater) {
 			.attr('class', 'box_text')
 			.attr('text-anchor', () => { return 'middle';})
 			.attr('alignment-baseline', () => { return 'central';})
-			// .attr('x', () => { return (index * BOX_WIDTH) + (BOX_WIDTH/2);})
-			// .attr('y', () => {
-			// 	if(node.depth <= clickedNode.depth){//ancestors and me lvl
-			// 		return TITLE_HIGHT + 0 + TEXT_PADDING;
-			// 	}else{//children lvl
-			// 		return (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + TEXT_PADDING;
-			// 	}
-			// })
-			// .text(()=>{
-			// 	// var childrenCount = (node.children)? node.children.length : 0;
-			// 	return  node.data.name
-			// })
 			.html(()=>{
 				const TSPAN_HEAD = '<tspan';
 				const TSPAN_X = ' x=';
@@ -151,17 +132,17 @@ export function create(treeData, selector, updater) {
 				var beginOfX = (index * BOX_WIDTH) + (BOX_WIDTH/2) - (Math.floor(index/MAX_BOX_PER_LINE)*1000);
 				var beginOfY = 0;
 				var yTextPadding = TEXT_PADDING;
+				if(title_parts.length > 2){
+					yTextPadding = TEXT_PADDING_FOR_LONG_TEXT;
+				}
 
 				if(node.depth <= clickedNode.depth){//ancestors and me lvl
 					// beginOfY = TITLE_HIGHT + 0 + TEXT_PADDING;
-					beginOfY = TITLE_HIGHT + 0 + TEXT_PADDING;
+					beginOfY = TITLE_HIGHT + yTextPadding;
 
 				}else{//children lvl
 					// beginOfY = (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + TEXT_PADDING + (Math.floor(index/MAX_BOX_PER_LINE)*BOX_HIGHT);
-					if(title_parts.length > 2){
-						yTextPadding = TEXT_PADDING_FOR_LONG_TEXT;
-					}
-					beginOfY = (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + yTextPadding + (Math.floor(index/MAX_BOX_PER_LINE)*BOX_HIGHT);
+					beginOfY = (2 * TITLE_HIGHT) + (1 * BOX_HIGHT) + (Math.floor(index/MAX_BOX_PER_LINE)*BOX_HIGHT) + yTextPadding;
 				}
 				var textSpanYRange = BOX_HIGHT / title_parts.length;
 				// var y = beginOfY / title_parts.length
@@ -217,8 +198,25 @@ export function create(treeData, selector, updater) {
 		return ancestors.reverse();
 	}
 
+	function isTheSameNode(node1, node2){
+		if(node1.depth != node2.depth){
+			isTheSameNode = false;
+		}
+		if(node1.depth == 0){
+			return true;
+		}
+		while(node1.parent!=undefined){
+			node1 = node1.parent;
+			node2 = node2.parent;
+			if(node1.data.name != node2.data.name){
+				return false;
+			}
+		}
+	}
 	function onTabletoolClick(){
 		d3.selectAll('.tabletool_top').on('click', function(d) {
+
+
 
 			//update to react parent class
 			updater(d);
@@ -227,11 +225,6 @@ export function create(treeData, selector, updater) {
 			var ancestors = getAncestors(parent);
 			var children = parent.children || [];
 			var childDepth = parent.depth + 1;
-
-			//delete invisible box
-			// for(var i = ancestors.length-1;i>=0;i++){
-			// 	ancestors[i].parent c
-			// }
 
 			createBoxTexts(parent);
 
@@ -242,13 +235,6 @@ export function create(treeData, selector, updater) {
 				}
 				return COLOR_BOX;
 			})
-			// .attr('alien', (node) => {//x
-			//
-			// 	return 'parent: ' + (node.parent==null?'':node.parent.data.name) + ' me: ' + node.data.name;
-			//
-			//
-			//
-			// })
 			.style("display", (node) => {
 				var childIndex = children.findIndex((child, index) => {
 					return (child.data.name == node.data.name);
@@ -267,8 +253,32 @@ export function create(treeData, selector, updater) {
 					}
 					// return "";
 				}else{//child lvl
-					if(childIndex > -1 && node.depth == parent.depth +1 && parent.data.name == node.parent.data.name){
-						return "";
+					//isTheSameNode
+					isTheSameNode = true;
+					var node1 = node.parent;
+					var node2 = parent;
+					if(node1.depth != node2.depth){
+						isTheSameNode = false;
+					}
+					if(node1.depth == 0 || node2.depth == 0){
+						isTheSameNode = true;
+					}else{
+						while(node1.parent!=undefined){
+							if(node1.data.name != node2.data.name){
+								isTheSameNode = false;
+								break;
+							}
+							node1 = node1.parent;
+							node2 = node2.parent;
+						}
+					}
+
+
+					if(childIndex > -1 && node.depth == parent.depth +1){//parent.data.name == node.parent.data.name){
+						if(isTheSameNode){
+							return '';
+						}
+						return 'none';
 					}
 					return "none";
 				}

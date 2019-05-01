@@ -3,31 +3,41 @@ import { Container, Button, TextInput, Progress, Radios } from "nes-react";
 import '../App.css';
 
 import bcrypt from 'bcryptjs';
-import {SERVER, SERVER_ADD_USER, URL_HOME,METHOD_POST, HEADER_JSON} from '../properties/url.js'
+import {SERVER, SERVER_ADD_USER, URL_HOME,METHOD_POST, HEADER_JSON, ERROR} from '../properties/url.js'
+import { ToastContainer, toast } from 'react-toastify';
+import '../../node_modules/react-toastify/dist/ReactToastify.css';
 
 const URL_ADD_NEW_USER = SERVER + SERVER_ADD_USER;
 const GENDER = [{value: 'male', label: 'male'}, {value: 'female', label: 'female'}]
 
 class Signup extends Component {
+  emptyFeild(){
+      toast.error(ERROR + 'Please enter all required fields', {
+      position: toast.POSITION.TOP_RIGHT
+    });
+  }
+
   constructor(props){
     super(props);
     this.state = {
       name: "",
       password: "",
       gender: GENDER[0].value,
-      age: 0,
-      exp: 0
+      age: 1,
+      exp: 1
     };
     this.handleSubmit = this.handleSubmit.bind(this);
 
   }
 
 
-
-
-
   handleSubmit() {
     const data = new FormData();
+    if(this.state.name=='' || this.state.password==''){
+      this.emptyFeild();
+      return;
+    }
+
     var hashPassword = this.encryptPassword(this.state.password);
     fetch(URL_ADD_NEW_USER, {
       method: METHOD_POST,
@@ -76,6 +86,7 @@ class Signup extends Component {
 
         <div>
           <Container  title='Signup' className='nes-container-center-overwrite'>
+            <ToastContainer />
             <TextInput label='username' className='nes-input-text' onChange={this.setUserName}></TextInput>
             <TextInput label='password' className='nes-input-text' onChange={this.setPassword} type='password'></TextInput>
             <div>

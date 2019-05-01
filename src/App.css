@@ -22,10 +22,20 @@ html,body{
   margin-right: 10px!important; */
 }
 
+.display_none {
+  display: none;
+}
+
+.display_inline {
+  display: block;
+}
+
 .right {
   float: right;
 }
-
+.text_align_center{
+  text-align: center;
+}
 .nes-input-number {
   text-align: right;
 }
@@ -56,13 +66,37 @@ html,body{
 .Question-text {
   padding-left: 20px;
   width: 1000px;
+  font-family: "Times New Roman", Times, serif;
 }
 
 /*Override_fontawesome*/
 .svg-inline--fa {
   color: white;
 }
+/*understand*/
+.timer {
+  position: fixed;
+  right: 80px;
+  top: 220px;
+  width: 50px;
+}
 
+.timer-icon{
+  position: fixed!important;
+  top: 190px;
+  right: 90px;
+}
+
+/*Util_plain_text*/
+.paper_line{
+  fill:white;
+  stroke-width:3;
+  stroke:#c7c7c7;
+}
+
+text {
+  pointer-events: none;
+}
 /*Util_indent_tree*/
 .node circle {
   fill: #fff;
@@ -190,7 +224,7 @@ g > .box_text {
 .Login-container {
   display: grid;
   grid-template-columns: 50% 50%;
-  grid grid-template-rows: 33% 33% 33%;
+  grid-template-rows: 33% 33% 33%;
   padding: 10px;
 }
 

@@ -1,12 +1,12 @@
 import * as d3 from "d3";
 import { select } from 'd3-selection';
 
-export function create(treeData, selector, updater) {
+export function create(treeData, selector, updater, width, height) {
 		var runtimeProblemProtecter = 1;
 		// Set the dimensions and margins of the diagram
 		var margin = {top: 20, right: 90, bottom: 30, left: 90},
 		    width = 960 - margin.left - margin.right,
-		    height = 500 - margin.top - margin.bottom;
+		    height = (height)? height : 500;//- margin.top - margin.bottom;
 
 		// append the svg object to the body of the page
 		// appends a 'group' element to 'svg'
@@ -94,7 +94,7 @@ export function create(treeData, selector, updater) {
 		  // Transition to the proper position for the node
 		  nodeUpdate.transition()
 		    .duration(duration)
-		    .attr("transform", function(d) { 
+		    .attr("transform", function(d) {
 		        return "translate(" + d.y + "," + d.x + ")";
 		     });
 
@@ -186,5 +186,5 @@ export function create(treeData, selector, updater) {
 		  	updater(d);
 
 		  }
-		}									
+		}
 }

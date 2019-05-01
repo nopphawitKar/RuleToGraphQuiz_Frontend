@@ -6,6 +6,7 @@ import '../../node_modules/nes.css/css/nes.css';
 import * as Understand from '../quiz_part/Understand.js';
 import Signup from './Signup.js';
 import Login from './Login.js';
+import SummaryChart from '../quiz_part/summaryChart.js'
 
 const HEADER_UNDERSTANDABILITY = "understandability test";
 
@@ -37,7 +38,7 @@ class Dashboard extends Component {
 
         <div>
           <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'/>
-          {this.routLogin()}
+           {this.routLogin()}
           {/*<Container className='nes-container-center-overwrite' title='Log-in'>
             <TextInput label='username' labelInline></TextInput>
             <TextInput label='password' labelInline></TextInput>
