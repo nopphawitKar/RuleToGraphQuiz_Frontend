@@ -37,7 +37,8 @@ class Signup extends Component {
       password: "",
       gender: GENDER[0].value,
       age: 1,
-      exp: 1
+      exp: 1,
+      programExp: 1
     };
     this.handleSubmit = this.handleSubmit.bind(this);
 
@@ -59,7 +60,7 @@ class Signup extends Component {
                             password: hashPassword ,
                             gender: this.state.gender,
                             age: this.state.age,
-                            exp: this.state.exp
+                            exp: this.state.exp + '-' + this.state.programExp
                           })
     })
     .then(response =>
@@ -107,6 +108,11 @@ class Signup extends Component {
     this.setState({exp: exp});
   }
 
+  setProgramExp  = e => {
+    var programExp = e.target.value;
+    this.setState({programExp: programExp});
+  }
+
   render() {
     return (
 
@@ -120,6 +126,9 @@ class Signup extends Component {
               <Radios options={GENDER} selectedValue={this.state.gender} onValueChange={this.onGenderChange}></Radios>
             </div>
             <TextInput value={this.state.age} label='age' className='nes-input-number' onChange={this.setAge} type='number' min="0"></TextInput>
+            <TextInput value={this.state.programExp} label='How many years have you known programming?'
+                className='nes-input-number' onChange={this.setProgramExp} type='number' min="0"></TextInput>
+
             <TextInput value={this.state.exp} label='How many years have you know data association?'
               className='nes-input-number' onChange={this.setDataAssoExp} type='number' min="0"></TextInput>
             <Button onClick={this.handleSubmit} primary>Save data</Button>
