@@ -57,6 +57,7 @@ class SummaryChart extends Component {
     })
     .catch((err) => {
       console.log(err)
+      window.location = urlManager.URL_UNDERSTAND;
     });
 
 
