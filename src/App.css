@@ -67,6 +67,9 @@ html,body{
   padding-left: 20px;
   width: 1000px;
   font-family: "Times New Roman", Times, serif;
+
+  font-size: 15px;
+  font-family: "Press Start 2P";
 }
 
 /*Override_fontawesome*/

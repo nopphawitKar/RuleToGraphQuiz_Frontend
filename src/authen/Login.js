@@ -18,7 +18,15 @@ class Login extends Component {
     });
   }
 
+  loginProcess(){
+    toast.info('Logging in! Please wait', {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: false
+    });
+  }
+
   constructor(props){
+    // this.loading();
     super(props);
     this.state = {
       name: '',
@@ -28,6 +36,7 @@ class Login extends Component {
 
 
   authen = () => {
+    this.loginProcess();
     var classScope = this;
     const data = new FormData();
     // var hashPassword = this.encryptPassword(this.state.password);

@@ -17,6 +17,13 @@ class Signup extends Component {
     });
   }
 
+  saveProcess(){
+    toast.info('Saving data! Pleas wait.', {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: false
+    });
+  }
+
   constructor(props){
     super(props);
     this.state = {
@@ -37,7 +44,7 @@ class Signup extends Component {
       this.emptyFeild();
       return;
     }
-
+    this.saveProcess();
     var hashPassword = this.encryptPassword(this.state.password);
     fetch(URL_ADD_NEW_USER, {
       method: METHOD_POST,

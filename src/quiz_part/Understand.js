@@ -46,6 +46,26 @@ class Understand extends Component {
     });
   }
 
+  saveProcess(){
+    toast.info('Saving data! Pleas wait.', {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: false
+    });
+  }
+
+  correctProcess(){
+    toast.success('Correct! Next Question!', {
+      position: toast.POSITION.TOP_RIGHT
+    });
+  }
+
+  loading(){
+    toast.info('Loading!', {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 2
+    });
+  }
+
   constructor(props){
     super(props);
     this.state = {
@@ -63,6 +83,9 @@ class Understand extends Component {
     this.getFormedAnswer = this.getFormedAnswer.bind(this);
   }
 
+  componentWillMount(){
+    this.loading();
+  }
   componentDidMount() {
     //return to home if dont log
     var userId = cookieManager.getCookie();
@@ -153,6 +176,8 @@ class Understand extends Component {
   }
 
   saveScore = (isLearnability) =>{
+    this.saveProcess();
+
     var graphScore = {};
     Object.assign(graphScore, objManager.graphFormat);
 
@@ -246,6 +271,7 @@ class Understand extends Component {
       console.log(objManager.ANSWER_LEARNABILITY[questionCount])
       if(objManager.ANSWER_LEARNABILITY[questionCount] == this.getFormedAnswer(node)){
         if(questionCount < MAX_QUESTION-1){
+          this.correctProcess();
           questionCount++;
           this.changeQuestionText();
           window.scrollTo(0, 0);
