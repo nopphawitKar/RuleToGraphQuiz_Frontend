@@ -316,9 +316,9 @@ class Understand extends Component {
         <ToastContainer />
         <div className="Understand-test-part">
           <div className="Head-bar">
-            <div className="text">Understand</div>
+            <div className="text">{COMMAND + this.state.currentQuestionText}</div>
           </div>
-          <div className="Question-text">{COMMAND + this.state.currentQuestionText}</div>
+          {/*}<div className="Question-text">{COMMAND + this.state.currentQuestionText}</div>*/}
           <div id="graph" className="understandGraph" style={{visibility: 'visible'}} onClick={this.onHover} onMouseMove={this.onHover}></div>
         </div>
         <Icon className='timer-icon' icon='trophy' medium></Icon>
