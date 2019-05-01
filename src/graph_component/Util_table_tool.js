@@ -237,14 +237,54 @@ export function create(treeData, selector, updater) {
 			})
 			.style("display", (node) => {
 				var childIndex = children.findIndex((child, index) => {
+
+
 					return (child.data.name == node.data.name);
 				});
 				var isAncestor = ancestors.find((ancestor, index) => {
-					return (ancestor.data.name == node.data.name);
+					var isTheSameNode = true;
+					var node1 = ancestor;
+					var node2 = node;
+					if(node1.depth != node2.depth){
+						isTheSameNode = false;
+					}else if(node1.depth == 0){
+						isTheSameNode = true;
+					}else{
+						while(node1.parent!=undefined){
+							if(node1.data.name != node2.data.name){
+								isTheSameNode = false;
+								break;
+							}
+							node1 = node1.parent;
+							node2 = node2.parent;
+						}
+					}
+
+
+					return isTheSameNode? true: false;//(ancestor.data.name == node.data.name);
 				});
 
 				if(node.depth == parent.depth){//parent lvl
-					return (node.data.name == parent.data.name ? "" : "none")
+					var isTheSameNode = true;
+					var node1 = node;
+					var node2 = parent;
+					if(node1.depth != node2.depth){
+						isTheSameNode = false;
+					}
+					if(node1.depth == 0 || node2.depth == 0){
+						isTheSameNode = true;
+					}else{
+						while(node1.parent!=undefined){
+							if(node1.data.name != node2.data.name){
+								isTheSameNode = false;
+								break;
+							}
+							node1 = node1.parent;
+							node2 = node2.parent;
+						}
+					}
+					return (isTheSameNode)? '': 'none';
+					// return (node.data.name == parent.data.name ? "" : "none")
 				}else if (node.depth < parent.depth) {//ancestors lvl
 					if(isAncestor){
 						return "";
@@ -254,7 +294,7 @@ export function create(treeData, selector, updater) {
 					// return "";
 				}else{//child lvl
 					//isTheSameNode
-					isTheSameNode = true;
+					var isTheSameNode = true;
 					var node1 = node.parent;
 					var node2 = parent;
 					if(node1.depth != node2.depth){
