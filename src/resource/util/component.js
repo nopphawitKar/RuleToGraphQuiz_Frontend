@@ -48,6 +48,7 @@ export function changeSecretToQuestion(secret){
     }
     temp += parts[i] + ',';
   }
+  temp = temp.replace('begin,', '');
   temp = temp.replace(objManager.ANSWER_LINE_SEPERATOR, '')
   return temp;
 }

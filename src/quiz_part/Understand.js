@@ -55,6 +55,13 @@ class Understand extends Component {
 
   correctProcess(){
     toast.success('Correct! Next Question!', {
+      position: toast.POSITION.TOP_RIGHT,
+      autoClose: 2
+    });
+  }
+
+  wrongProcess(){
+    toast.error('Wrong! Try again!', {
       position: toast.POSITION.TOP_RIGHT
     });
   }
@@ -277,7 +284,6 @@ class Understand extends Component {
           window.scrollTo(0, 0);
         }else{
           this.saveScore();
-
         }
       }
     }

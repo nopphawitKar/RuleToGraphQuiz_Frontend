@@ -61,6 +61,7 @@ export function create(treeData, selector, updater) {
         }
         assoText += (ancestors[i].data.name + COMMA);
       }
+			assoText = assoText.replace('begin,', '');
       return assoText;
     }
 

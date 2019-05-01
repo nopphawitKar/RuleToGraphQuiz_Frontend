@@ -100,9 +100,9 @@ class Signup extends Component {
               <label>Gender</label>
               <Radios options={GENDER} selectedValue={this.state.gender} onValueChange={this.onGenderChange}></Radios>
             </div>
-            <TextInput value={this.state.age} label='age' className='nes-input-number' onChange={this.setAge} type='number'></TextInput>
+            <TextInput value={this.state.age} label='age' className='nes-input-number' onChange={this.setAge} type='number' min="0"></TextInput>
             <TextInput value={this.state.exp} label='How many years have you know data association?'
-              className='nes-input-number' onChange={this.setDataAssoExp} type='number'></TextInput>
+              className='nes-input-number' onChange={this.setDataAssoExp} type='number' min="0"></TextInput>
             <Button onClick={this.handleSubmit} primary>Save data</Button>
       </Container>
         </div>
