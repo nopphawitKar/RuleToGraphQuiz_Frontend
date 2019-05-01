@@ -270,8 +270,7 @@ export function create(treeData, selector, updater) {
 					var node2 = parent;
 					if(node1.depth != node2.depth){
 						isTheSameNode = false;
-					}
-					if(node1.depth == 0 || node2.depth == 0){
+					}else if(node1.depth == 0 || node2.depth == 0){
 						isTheSameNode = true;
 					}else{
 						while(node1.parent!=undefined){
@@ -299,8 +298,7 @@ export function create(treeData, selector, updater) {
 					var node2 = parent;
 					if(node1.depth != node2.depth){
 						isTheSameNode = false;
-					}
-					if(node1.depth == 0 || node2.depth == 0){
+					}else if(node1.depth == 0 || node2.depth == 0){
 						isTheSameNode = true;
 					}else{
 						while(node1.parent!=undefined){
