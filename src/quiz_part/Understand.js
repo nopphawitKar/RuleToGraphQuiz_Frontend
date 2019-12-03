@@ -77,8 +77,8 @@ class Understand extends Component {
     this.state = {
       //central offset
       time: 0,
-      mouseCoords: [],
       clickedNodes: {},
+      hoverObjs: [],
       currentGraphType: GRAPH_SERIAL.PLAIN_TEXT,
       currentAnswerClickCount: 0,
       currentQuestionText: ''
@@ -134,7 +134,7 @@ class Understand extends Component {
 
         classScope.setState({currentGraphType : currentGraphType});
         classScope.createGraph(currentGraphType);
-        classScope.timedCount();
+        // classScope.timedCount();
         componentManager.addKeyDownListener();
 
     })
@@ -143,15 +143,15 @@ class Understand extends Component {
         currentQuestionText: componentManager.changeSecretToQuestion(objManager.ANSWER_UNDERSTANDABILITY)
       })
       classScope.createGraph(classScope.state.currentGraphType);
-      classScope.timedCount();
+      // classScope.timedCount();
       componentManager.addKeyDownListener();
     });
   }
 
-  timedCount = () => {
-    this.setState({time: ++this.state.time})
-    setTimeout(this.timedCount, 1000);
-  }
+  // timedCount = () => {
+  //   this.setState({time: ++this.state.time})
+  //   setTimeout(this.timedCount, 1000);
+  // }
   //create all graph here
   createGraph(currentGraphType){
 
@@ -191,7 +191,7 @@ class Understand extends Component {
     graphScore.time = this.state.time;
     graphScore.clickedNodes = this.state.clickedNodes;
     graphScore.keyStroke = componentManager.keycodeString;
-    graphScore.heatmap = this.state.mouseCoords;
+    graphScore.heatmap = this.state.hoverObjs;
     //set to understand Form
     var understandForm = {};
     //send post
@@ -227,8 +227,7 @@ class Understand extends Component {
 
     //clear central offset
     this.setState({
-      time: 0,
-      mouseCoords: []
+      time: 0
     });
   }
 
@@ -262,11 +261,14 @@ class Understand extends Component {
       currentQuestionText: componentManager.changeSecretToQuestion(secret)
     })
   }
-  updateOnGraphClick(node){
+  updateOnGraphClick(node, hoverObjs){
+    console.log(node);
     var clickedNode = d3LogicManager.getClickedNode(node);
     var clickedNodes = this.state.clickedNodes;//[clickedNodeCount] = clickedNode;
     clickedNodes[clickedNodeCount++] = clickedNode;
     this.setState({clickedNodes: clickedNodes});
+    this.setState({hoverObjs: hoverObjs});
+    // this.setState({time: time});
 
     var IS_UNDERSTAND = this.isUnderstand(this.state.currentGraphType);
 
@@ -274,7 +276,7 @@ class Understand extends Component {
       this.changeQuestionText();
       this.saveScore();
     }else if(!IS_UNDERSTAND){
-      console.log(objManager.ANSWER_LEARNABILITY[questionCount])
+      // console.log(objManager.ANSWER_LEARNABILITY[questionCount])
       if(objManager.ANSWER_LEARNABILITY[questionCount] == this.getFormedAnswer(node)){
         if(questionCount < MAX_QUESTION-1){
           this.correctProcess();
@@ -288,27 +290,6 @@ class Understand extends Component {
     }
   }
 
-  onHover = (e) => {
-    var target = e.target;
-    var rect = target.getBoundingClientRect();
-    // console.log("x: " + (e.clientX-rect.left) + "y: "+ (e.clientY-rect.top));
-    var x = e.clientX-rect.left;
-    var y = e.clientY-rect.top;
-
-    var newCoords = {x: x, y: y};
-    var date = new Date();
-    var currentTime = date.getTime();
-    if(saveTimeChecker == 0 || currentTime > saveTimeChecker + 1000){
-      saveTimeChecker = currentTime;
-
-      var newStateCoords = this.state.mouseCoords.concat(newCoords);
-      this.setState({mouseCoords: newStateCoords});
-      // console.log(newStateCoords)
-    }
-
-
-  }
-
 
   render() {
     return (
@@ -319,9 +300,9 @@ class Understand extends Component {
             <div className="text">{COMMAND + this.state.currentQuestionText}</div>
           </div>
           {/*}<div className="Question-text">{COMMAND + this.state.currentQuestionText}</div>*/}
-          <div id="graph" className="understandGraph" style={{visibility: 'visible'}} onClick={this.onHover} onMouseMove={this.onHover}></div>
+          <div id="graph" className="understandGraph" style={{visibility: 'visible'}} ></div>
         </div>
-        <Icon className='timer-icon' icon='trophy' medium></Icon>
+        {/*<Icon className='timer-icon' icon='trophy' medium></Icon>*/}
         <div className='timer'><p className='text_align_center'>{this.state.time}</p></div>
 
       </div>

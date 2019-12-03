@@ -21,11 +21,11 @@ const COMMA = ',';
 var lineCounter = 0;
 var svgRef = {};
 
-export function create(treeData, selector, updater) {
-	// var margin = {top: 20, right: 90, bottom: 30, left: 90},
-	// 		width = 1000,//960 - margin.left - margin.right,
-	// 		height = 700;//500 - margin.top - margin.bottom;
+//timer
+var time = 0;
+var hoverObjs = [];
 
+export function create(treeData, selector, updater) {
 	var treeDataCopy = Object.assign({}, treeData);
 	var rootNode = d3.hierarchy(treeDataCopy)
 
@@ -115,9 +115,21 @@ export function create(treeData, selector, updater) {
       resize(allLine.length);
 
       d3.selectAll('.paper_line').on('click', function(node) {
-        updater(node);
-      })
+				node.time = time;
+        updater(node, hoverObjs);
+      }).on('mouseover', function(d){
+		    // console.log(getAssorule(d) + "::"+time)
+				var hoverObj = {node: getAssorule(d), time: time }
+				hoverObjs.push(hoverObj);
+			})
+
+			var myTime = setInterval(updateTime, 1000);
+			function updateTime(){
+				time++;
+				// console.log("time-Util_plain_text.js:"+time);
+			}
 	}
   initiate();
+
 
 }
