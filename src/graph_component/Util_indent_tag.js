@@ -1,6 +1,11 @@
 import * as d3 from "d3";
 import { select, hierarchy } from 'd3-selection';
 
+const COMMA = ',';
+
+var time = 0;
+var hoverObjs = [];
+
 export function create(treeData, selector, updater) {
   var margin = {top: 30, right: 20, bottom: 30, left: 20},
       width = 960,
@@ -71,7 +76,8 @@ export function create(treeData, selector, updater) {
         .attr("height", barHeight)
         .attr("width", barWidth)
         .style("fill", color)
-        .on("click", click);
+        .on("click", click)
+        .on('mouseover', mouseover);
 
     nodeEnter.append("text")
         .attr("dy", 3.5)
@@ -144,14 +150,47 @@ export function create(treeData, selector, updater) {
       d._children = null;
     }
     update(d);
-    updater(d);
+    d.time = time;
+    updater(d, hoverObjs);
   }
 
-  function hideAllChildren(d){
-
+  function mouseover(d) {
+    var hoverObj = {node: getAssorule(d), time: time }
+    hoverObjs.push(hoverObj);
   }
+
 
   function color(d) {
     return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+  }
+
+  function getAncestors(node){
+    var ancestors = [];
+    while(node.parent !== null){
+      ancestors.push(node.parent);
+      node = node.parent;
+    }
+    return ancestors.reverse();
+  }
+
+  function getAssorule(node){
+    var ancestors = getAncestors(node);
+    var assoText = '{';
+    for(var i=0;i<ancestors.length;i++){
+      if(i == ancestors.length-1){
+        assoText += (ancestors[i].data.name + '} => ');
+        assoText += node.data.name;
+        continue;
+      }
+      assoText += (ancestors[i].data.name + COMMA);
+    }
+    assoText = assoText.replace('begin,', '');
+    return assoText;
+  }
+
+  var myTime = setInterval(updateTime, 1000);
+  function updateTime(){
+    time++;
+    // console.log("time-Util_plain_text.js:"+time);
   }
 }

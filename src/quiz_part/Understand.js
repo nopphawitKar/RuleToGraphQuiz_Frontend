@@ -134,7 +134,6 @@ class Understand extends Component {
 
         classScope.setState({currentGraphType : currentGraphType});
         classScope.createGraph(currentGraphType);
-        // classScope.timedCount();
         componentManager.addKeyDownListener();
 
     })
@@ -148,10 +147,6 @@ class Understand extends Component {
     });
   }
 
-  // timedCount = () => {
-  //   this.setState({time: ++this.state.time})
-  //   setTimeout(this.timedCount, 1000);
-  // }
   //create all graph here
   createGraph(currentGraphType){
 
@@ -202,9 +197,6 @@ class Understand extends Component {
     quizForm.currentQuiz = objManager.FORMAT_UNDERSTAND;
     quizForm.currentGraph = this.state.currentGraphType;
     quizForm.underStand = understandForm;
-    var date = new Date();
-    quizForm.timeStamp = date.getTime();
-    //quizForm.learn = xxx;
     console.log(quizForm);
 
     const data = new FormData();

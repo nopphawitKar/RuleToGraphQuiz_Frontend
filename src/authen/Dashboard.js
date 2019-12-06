@@ -39,22 +39,6 @@ class Dashboard extends Component {
         <div>
           <link href='https://fonts.googleapis.com/css?family=Press Start 2P' rel='stylesheet'/>
            {this.routLogin()}
-          {/*<Container className='nes-container-center-overwrite' title='Log-in'>
-            <TextInput label='username' labelInline></TextInput>
-            <TextInput label='password' labelInline></TextInput>
-            <Button primary>Log-in</Button>
-          </Container>
-          <Container className='nes-container-center-overwrite'>If you dont have an account! Sign up here
-            <Button primary>Sign-up</Button>
-          </Container>*/}
-          {/*<div id='main_container'>
-            <h2>All mission!</h2>
-            <Container>
-              <label className='progress-label'>8%</label>
-              <Progress success max='8' value='3'></Progress>
-              <Button primary>Start Mission</Button>
-            </Container>
-          </div>*/}
         </div>
 
 

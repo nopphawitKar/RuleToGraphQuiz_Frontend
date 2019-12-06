@@ -1,6 +1,10 @@
 import * as d3 from "d3";
 import { select } from 'd3-selection';
 
+const COMMA = ',';
+
+var time = 0;
+var hoverObjs = [];
 export function create(treeData, selector, updater, width, height) {
 		var runtimeProblemProtecter = 1;
 		// Set the dimensions and margins of the diagram
@@ -67,7 +71,8 @@ export function create(treeData, selector, updater, width, height) {
 		      .attr("transform", function(d) {
 		        return "translate(" + source.y0 + "," + source.x0 + ")";
 		    })
-		    .on('click', click);
+		    .on('click', click)
+				.on('mouseover', mouseover);
 
 		  // Add Circle for the nodes
 		  nodeEnter.append('circle')
@@ -176,15 +181,50 @@ export function create(treeData, selector, updater, width, height) {
 			// if(d.children === undefined){
 			// }
 		    if (d.children) {
-		        d._children = d.children;
-		        d.children = null;
-		      } else {
-		        d.children = d._children;
-		        d._children = null;
-		      }
+	        d._children = d.children;
+	        d.children = null;
+	      } else {
+	        d.children = d._children;
+	        d._children = null;
+	      }
 		    update(d);
-		  	updater(d);
+				d.time = time;
+		  	updater(d, hoverObjs);
 
 		  }
+		}
+
+		function mouseover(d) {
+			var hoverObj = {node: getAssorule(d), time: time }
+			hoverObjs.push(hoverObj);
+		}
+
+		function getAncestors(node){
+  		var ancestors = [];
+  		while(node.parent !== null){
+  			ancestors.push(node.parent);
+  			node = node.parent;
+  		}
+  		return ancestors.reverse();
+  	}
+
+    function getAssorule(node){
+      var ancestors = getAncestors(node);
+      var assoText = '{';
+      for(var i=0;i<ancestors.length;i++){
+        if(i == ancestors.length-1){
+          assoText += (ancestors[i].data.name + '} => ');
+          assoText += node.data.name;
+          continue;
+        }
+        assoText += (ancestors[i].data.name + COMMA);
+      }
+			assoText = assoText.replace('begin,', '');
+      return assoText;
+    }
+		var myTime = setInterval(updateTime, 1000);
+		function updateTime(){
+			time++;
+			// console.log("time-Util_plain_text.js:"+time);
 		}
 }

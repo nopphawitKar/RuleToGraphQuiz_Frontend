@@ -22,6 +22,11 @@ const TITLE_TEXT_CHOICE = 'คุณลักษณะที่สามาร�
 const COLOR_BOX = '#ffac00';
 const COLOR_BOX_CHOICE = 'white';
 
+const COMMA = ',';
+
+var time = 0;
+var hoverObjs = [];
+
 var selectedCount = 0;
 // var xCoordinates = [0];
 // var yCoordinates = [0];
@@ -63,7 +68,7 @@ export function create(treeData, selector, updater) {
 		  .attr('height', function(d) { return BOX_HIGHT })
 			.attr('y', function(d) {return TITLE_HIGHT + 0;})
 			.attr("id", function(d,i){
-				console.log(i + ':' + d.data.name+' hierarchy ' + d.depth);
+				// console.log(i + ':' + d.data.name+' hierarchy ' + d.depth);
 				return "tabletool" + i
 			})
 			.style("display", function(d) {
@@ -219,7 +224,9 @@ export function create(treeData, selector, updater) {
 
 
 			//update to react parent class
-			updater(d);
+			// console.log(d)
+			d.time = time;
+			updater(d, hoverObjs);
 			//kill same hierarchy when (select)
 			var parent = d;
 			var ancestors = getAncestors(parent);
@@ -351,7 +358,41 @@ export function create(treeData, selector, updater) {
 					return selectedElementHeight + newLineHeight;//childDepth * BOX_HIGHT;
 				}
 			})
+		}).on('mouseover', function(d) {
+			console.log(d)
+			var hoverObj = {node: getAssorule(d), time: time }
+			hoverObjs.push(hoverObj);
 		});
+	}
+
+	function getAncestors(node){
+		var ancestors = [];
+		while(node.parent !== null){
+			ancestors.push(node.parent);
+			node = node.parent;
+		}
+		return ancestors.reverse();
+	}
+
+	function getAssorule(node){
+		var ancestors = getAncestors(node);
+		var assoText = '{';
+		for(var i=0;i<ancestors.length;i++){
+			if(i == ancestors.length-1){
+				assoText += (ancestors[i].data.name + '} => ');
+				assoText += node.data.name;
+				continue;
+			}
+			assoText += (ancestors[i].data.name + COMMA);
+		}
+		assoText = assoText.replace('begin,', '');
+		return assoText;
+	}
+
+	var myTime = setInterval(updateTime, 1000);
+	function updateTime(){
+		time++;
+		// console.log("time-Util_plain_text.js:"+time);
 	}
 
 	initiate(ORIGINAL_DEPTH);
