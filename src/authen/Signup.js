@@ -126,11 +126,11 @@ class Signup extends Component {
               <Radios options={GENDER} selectedValue={this.state.gender} onValueChange={this.onGenderChange}></Radios>
             </div>
             <TextInput value={this.state.age} label='age' className='nes-input-number' onChange={this.setAge} type='number' min="0"></TextInput>
-            <TextInput value={this.state.programExp} label='How many years have you known programming?'
+            <TextInput value={this.state.programExp} label='คุณเป็นนักศึกษาปริญญาตรีชั้นปีที่เท่าไหร่(หากเรียนจบแล้วกรุณากรอก 99)'
                 className='nes-input-number' onChange={this.setProgramExp} type='number' min="0"></TextInput>
 
-            <TextInput value={this.state.exp} label='How many years have you know data association?'
-              className='nes-input-number' onChange={this.setDataAssoExp} type='number' min="0"></TextInput>
+            <TextInput value={this.state.exp} label='คุณรู้จัก data association มากี่ปีแล้ว(ตัวอย่างการกรอก: 1ปี 5 เดือน กรอก 1:5 )'
+              className='nes-input-number' onChange={this.setDataAssoExp}></TextInput>
             <Button onClick={this.handleSubmit} primary>Save data</Button>
       </Container>
         </div>
