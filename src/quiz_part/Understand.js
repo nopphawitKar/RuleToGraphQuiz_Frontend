@@ -105,8 +105,8 @@ class Understand extends Component {
     })
     .then(response => response.json())
     .then((response)=> {
-
-        if(response.length == MAX_GRAPH){
+        var lastElement = response.length;
+        if(response[response.length-1].currentGraph == MAX_GRAPH -1){
           window.location = urlManager.URL_SUMMARY;
         }
 
