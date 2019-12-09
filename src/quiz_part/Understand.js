@@ -18,7 +18,7 @@ import * as d3LogicManager from '../resource/util/d3Logic.js';
 import * as objManager from '../properties/obj_d3.js';
 import * as urlManager from '../properties/url.js';
 
-const MAX_QUESTION = 10;
+const MAX_QUESTION = 5;
 const MAX_GRAPH = 8;
 var questionCount = 0;
 const START_OF_LEARNABILITY = 4;
