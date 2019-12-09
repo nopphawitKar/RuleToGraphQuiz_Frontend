@@ -140,6 +140,20 @@ export function create(treeData, selector, updater) {
     });
   }
 
+  //collapse all
+  function collapseAll(){
+    root.children.forEach(collapse);
+    collapse(root);
+    update(root);
+  }
+//manual collapse nodes
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d._children.forEach(collapse);
+      d.children = null;
+    }
+  }
   // Toggle children on click.
   function click(d) {
     if (d.children) {
@@ -193,4 +207,6 @@ export function create(treeData, selector, updater) {
     time++;
     // console.log("time-Util_plain_text.js:"+time);
   }
+
+  collapseAll(root);
 }

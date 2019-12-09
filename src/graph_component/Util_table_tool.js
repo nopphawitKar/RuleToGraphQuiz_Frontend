@@ -21,6 +21,7 @@ const TITLE_TEXT_CHOICE = 'คุณลักษณะที่สามาร�
 
 const COLOR_BOX = '#ffac00';
 const COLOR_BOX_CHOICE = 'white';
+const COLOR_BEGIN = 'red';
 
 const COMMA = ',';
 
@@ -237,6 +238,9 @@ export function create(treeData, selector, updater) {
 
 			d3.selectAll('.tabletool_top')
 			.style('fill', (node) => {
+				if(node.depth == 0){
+					return COLOR_BEGIN;
+				}
 				if(node.depth == childDepth){
 					return COLOR_BOX_CHOICE;
 				}

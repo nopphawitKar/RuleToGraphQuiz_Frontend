@@ -35,7 +35,9 @@ export function create(treeData, selector, updater, width, height) {
 		root.y0 = 0;
 
 		// Collapse after the second level
+
 		root.children.forEach(collapse);
+		collapse(root);
 
 		update(root);
 
@@ -195,8 +197,13 @@ export function create(treeData, selector, updater, width, height) {
 		}
 
 		function mouseover(d) {
+			console.log('over here')
 			var hoverObj = {node: getAssorule(d), time: time }
 			hoverObjs.push(hoverObj);
+		}
+
+		function onTextOver(d){
+			console.log('text over');
 		}
 
 		function getAncestors(node){
