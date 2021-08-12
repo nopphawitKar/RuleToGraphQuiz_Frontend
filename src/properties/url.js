@@ -1,7 +1,8 @@
 // export const SERVER = 'http://localhost:3001';
 // export const SERVER = 'http://visualfrontend.eu-4.evennode.com';
 // export const SERVER = 'https://backend-visual.herokuapp.com';
-export const SERVER = 'https://quiz-back-1.herokuapp.com';
+// export const SERVER = 'https://quiz-back-1.herokuapp.com';
+export const SERVER = 'https://assofriend-quiz-backend.herokuapp.com';
 
 export const SERVER_USER = '/users'
 export const SERVER_ADD_USER = '/users/addNewUser';
